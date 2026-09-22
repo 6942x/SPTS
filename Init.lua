@@ -204,51 +204,6 @@ local function w37(a, b)
         end
 end
 
-local function wpm(a)
-        if a then
-                w32("PP", function()
-                        task.wait(0.4)
-                        local b
-                        while w22.stat == "PsychicPower" do
-                                local c = w16.Character
-                                local d = c and c:FindFirstChildOfClass("Humanoid")
-                                local e = c and c:FindFirstChild("Meditate")
-                                local f = w16:FindFirstChild("Backpack")
-                                local g = f and f:FindFirstChild("Meditate")
-                                if e then
-                                        if b ~= 0 then
-                                                b = 0
-                                                w37("Psychic Power \xe2\x80\x94 Meditating", w5(170, 120, 255))
-                                        end
-                                        task.wait(0.5)
-                                elseif g and d and d.Health > 0 then
-                                        if b ~= 1 then
-                                                b = 1
-                                                w37("Psychic Power \xe2\x80\x94 Re-equipping Meditate", w5(170, 120, 255))
-                                        end
-                                        pcall(d.EquipTool, d, g)
-                                        task.wait(0.3)
-                                elseif not g then
-                                        if b ~= 2 then
-                                                b = 2
-                                                w37("Psychic Power \xe2\x80\x94 Meditate tool not found", w5(255, 150, 80))
-                                        end
-                                        task.wait(0.4)
-                                else
-                                        task.wait(0.4)
-                                end
-                        end
-                end)
-        else
-                w31("PP")
-                local b = w16.Character
-                if b and b:FindFirstChild("Meditate") then
-                        local c = b:FindFirstChildOfClass("Humanoid")
-                        if c then c:UnequipTools() end
-                end
-        end
-end
-
 local w38 = {
         FistStrength = {
                 TrainingArea_2  = { req = "0e0",    multi = "x1e1"    },
@@ -564,6 +519,60 @@ local function w48(a)
         if d and (a or e ~= w19.we) then
                 w19.we = e
                 wfr({ "EquipWeight_Request", e })
+        end
+end
+
+local function wpm(a)
+        if a then
+                w32("PP", function()
+                        task.wait(0.4)
+                        local b
+                        while w22.stat == "PsychicPower" do
+                                local c = w16.Character
+                                local d = c and c:FindFirstChildOfClass("Humanoid")
+                                local e = c and c:FindFirstChild("Meditate")
+                                local f = w16:FindFirstChild("Backpack")
+                                local g = f and f:FindFirstChild("Meditate")
+                                local h = w44("PsychicPower", w43("PsychicPower"))
+                                local i = h ~= nil and string.find(h, "AFK_PP", 1, true) ~= nil
+                                if i then
+                                        if b ~= 3 then
+                                                b = 3
+                                                w37("Psychic Power \xe2\x80\x94 AFK Zone (no Meditate needed)", w5(170, 120, 255))
+                                        end
+                                        if e and f then pcall(function() e.Parent = f end) end
+                                        task.wait(0.5)
+                                elseif e then
+                                        if b ~= 0 then
+                                                b = 0
+                                                w37("Psychic Power \xe2\x80\x94 Meditating", w5(170, 120, 255))
+                                        end
+                                        task.wait(0.5)
+                                elseif g and d and d.Health > 0 then
+                                        if b ~= 1 then
+                                                b = 1
+                                                w37("Psychic Power \xe2\x80\x94 Re-equipping Meditate", w5(170, 120, 255))
+                                        end
+                                        pcall(d.EquipTool, d, g)
+                                        task.wait(0.3)
+                                elseif not g then
+                                        if b ~= 2 then
+                                                b = 2
+                                                w37("Psychic Power \xe2\x80\x94 Meditate tool not found", w5(255, 150, 80))
+                                        end
+                                        task.wait(0.4)
+                                else
+                                        task.wait(0.4)
+                                end
+                        end
+                end)
+        else
+                w31("PP")
+                local b = w16.Character
+                if b and b:FindFirstChild("Meditate") then
+                        local c = b:FindFirstChildOfClass("Humanoid")
+                        if c then c:UnequipTools() end
+                end
         end
 end
 
