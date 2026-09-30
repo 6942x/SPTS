@@ -473,11 +473,27 @@ local function e33(a)
                 local e = a.PrimaryPart or a:FindFirstChildWhichIsA("BasePart")
                 if e then d = e.CFrame end
         end
-        if d then
-                c.CFrame = d + Vector3.new(0, 5, 0)
-                return true, d + Vector3.new(0, 5, 0)
+        if not d then return false end
+        local f = d + Vector3.new(0, 5, 0)
+        local g, h
+        if a:IsA("BasePart") then
+                g, h = a.CFrame, a.Size
+        elseif a:IsA("Model") then
+                local i, j, k = pcall(a.GetBoundingBox, a)
+                if i and j and k then
+                        g, h = j, k
+                end
         end
-        return false
+        if g and h then
+                local l = g:PointToObjectSpace(c.Position)
+                local m = h.Y <= 8 and 4 or h.Y / 2
+                if math.abs(l.X) <= h.X / 2 and math.abs(l.Z) <= h.Z / 2 and l.Y >= -h.Y / 2 and l.Y <= m then
+                        local n = Vector3.new(c.Position.X, math.min(c.Position.Y, f.Position.Y), c.Position.Z)
+                        return true, CFrame.new(n) * (f - f.Position)
+                end
+        end
+        c.CFrame = f
+        return true, f
 end
 
 local function e34(a)
