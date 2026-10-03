@@ -123,7 +123,7 @@ xpcall(function()
                 b, g4 = b:gsub('themeEvent%.Event:Connect%(set%)%s+set%(%)', 'local cc cc = themeEvent.Event:Connect(function() if typeof(object) ~= "Instance" or not object.Parent then cc:Disconnect() return end set() end) object.AncestryChanged:Connect(function() if typeof(object) ~= "Instance" or not object.Parent then cc:Disconnect() end end) set()')
                 b, g5 = b:gsub('CollectionService:AddTag%(newNotification, "__starlight_ExpiredNotification"%)', 'CollectionService:AddTag(newNotification, "__starlight_ExpiredNotification") task.delay(1.5, function() local cExp = CollectionService:GetTagged("__starlight_ExpiredNotification") for ni = 1, #cExp - 6 do pcall(function() cExp[ni]:Destroy() end) end end)')
                 b, g6 = b:gsub('if v%.ClassName == "Frame" and v ~= option then%s+Deactivate%(v%)%s+NestedElement%.Values%.CurrentOption = %{}%s+end', 'if v.ClassName == "Frame" and v ~= option then if v:GetAttribute("Active") == true then Deactivate(v) end NestedElement.Values.CurrentOption = {} end')
-                b, g7 = b:gsub('RunService%.RenderStepped:Connect%(function%(dt%)%s+if not IsHovering then%s+return%s+end', 'local cTRS cTRS = RunService.RenderStepped:Connect(function(dt) if not HoverInstance.Parent then cTRS:Disconnect() return end if not IsHovering then return end')
+                b, g7 = b:gsub('RunService%.RenderStepped:Connect%(function%(dt%)%s+if not IsHovering then%s+return%s+end', 'local cTRS cTRS = RunService.RenderStepped:Connect(function(dt) if not HoverInstance.Parent then cTRS:Disconnect() return end if not IsHovering then return end if Starlight.Minimized or not Starlight.Instance.MainWindow.Visible then IsHovering = false tooltip.Visible = false return end')
                 if g4 + g5 + g6 + g7 < 4 then
                         warn("[cLTR] Starlight notification-cleanup patch did not match the downloaded library source")
                 end
@@ -142,6 +142,11 @@ xpcall(function()
                 b, g15 = b:gsub('print%(`loaded asset {asset}`%)%s+end%s+end%)', 'print(`loaded asset {asset}`) end end) end)')
                 if g11 + g12 + g13 + g14 + g15 < 5 then
                         warn("[cLTR] Starlight boot-perf patch did not match the downloaded library source")
+                end
+                local g16
+                b, g16 = b:gsub('Starlight%.Minimized = true%s+end', 'Starlight.Minimized = true pcall(function() local cTT = Starlight.Instance and Starlight.Instance:FindFirstChild("Tooltips") if cTT then for _, t in ipairs(cTT:GetChildren()) do t.Visible = false end end end) end')
+                if g16 < 1 then
+                        warn("[cLTR] Starlight tooltip-hide patch did not match the downloaded library source")
                 end
                 return b
         end
@@ -2510,6 +2515,16 @@ xpcall(function()
                 end
         end
 
+        local function cTiphide()
+                pcall(function()
+                        local a = c6.Instance and c6.Instance:FindFirstChild("Tooltips")
+                        if not a then return end
+                        for _, b in ipairs(a:GetChildren()) do
+                                b.Visible = false
+                        end
+                end)
+        end
+
         c1.th[#c1.th + 1] = task.spawn(function()
                 while true do
                         task.wait(1)
@@ -2539,6 +2554,8 @@ xpcall(function()
                                         end
                                 end)
                                 cTheal()
+                        else
+                                cTiphide()
                         end
                 end
         end)
@@ -2832,6 +2849,7 @@ xpcall(function()
                         cWindow.Instance.Visible = false
                         c6.Instance.Drag.Visible = false
                 end)
+                cTiphide()
         else
                 c1.th[#c1.th + 1] = task.delay(0.35, function()
                         pcall(function()
