@@ -148,6 +148,26 @@ xpcall(function()
                 if g16 < 1 then
                         warn("[cLTR] Starlight tooltip-hide patch did not match the downloaded library source")
                 end
+                local g17
+                b, g17 = b:gsub('if option:GetAttribute%("Active"%) == false then%s+Activate%(option%)%s+local Success, Response = pcall%(function%(%)', 'if option:GetAttribute("Active") == false then Activate(option) if not NestedElement.Values.MultipleOptions then close() end local Success, Response = pcall(function()')
+                if g17 < 1 then
+                        warn("[cLTR] Starlight dropdown-close patch did not match the downloaded library source")
+                end
+                local g18a
+                b, g18a = b:gsub('local function close%(%)%s+Tween%(%s*NestedElement%.Instances%[2%]%.List', 'local function close() NestedElement.__cLTRopen = false if NestedElement.Instances[2].Size.Y.Offset <= 0 then NestedElement.Instances[2].Visible = false end task.delay(0.25, function() if NestedElement and NestedElement.Instances ~= nil and not NestedElement.__cLTRopen and NestedElement.Instances[2].Size.Y.Offset <= 0 then NestedElement.Instances[2].Visible = false end end) Tween(NestedElement.Instances[2].List')
+                if g18a < 1 then
+                        warn("[cLTR] Starlight dropdown-close-guard patch did not match the downloaded library source")
+                end
+                local g18b
+                b, g18b = b:gsub('Size = UDim2%.fromOffset%(NestedElement%.Instances%[2%]%.Size%.X%.Offset, 0%)%s*},%s*function%(%)%s*if NestedElement and NestedElement%.Instances ~= nil then%s+NestedElement%.Instances%[2%]%.Visible = false', 'Size = UDim2.fromOffset(NestedElement.Instances[2].Size.X.Offset, 0) }, function() if NestedElement and NestedElement.Instances ~= nil then if not NestedElement.__cLTRopen and NestedElement.Instances[2].Size.Y.Offset <= 0 then NestedElement.Instances[2].Visible = false end')
+                if g18b < 1 then
+                        warn("[cLTR] Starlight dropdown-close-callback patch did not match the downloaded library source")
+                end
+                local g18c
+                b, g18c = b:gsub('NestedElement%.Instances%[1%]%.Interact%.MouseButton1Click:Connect%(function%(%)%s+if NestedElement%.Instances%[2%]%.Visible then%s+close%(%)%s+else%s+NestedElement%.Instances%[2%]%.Visible = true%s+height = NestedElement%.Instances%[2%]%.List', 'NestedElement.Instances[1].Interact.MouseButton1Click:Connect(function() if NestedElement.Instances[2].Visible and NestedElement.Instances[2].Size.Y.Offset > 1 then close() else NestedElement.Instances[2].Visible = true NestedElement.__cLTRopen = true height = NestedElement.Instances[2].List')
+                if g18c < 1 then
+                        warn("[cLTR] Starlight dropdown-reopen-toggle patch did not match the downloaded library source")
+                end
                 return b
         end
 
@@ -862,7 +882,7 @@ xpcall(function()
                 else
                         f = tostring(b)
                 end
-                if d and d[2] == e and d[3] == f then return end
+                if d and d[2] == e and d[3] == f and cfv(a) == e then return end
                 cSyncMem[a] = {b, e, f, os.clock()}
                 a:Set({Options = b, CurrentOption = c})
         end
@@ -876,7 +896,7 @@ xpcall(function()
                 if not a then return end
                 local c = tostring(b)
                 local d = cSyncMem[a]
-                if d and d[2] == "v" and d[1] == c then return end
+                if d and d[2] == "v" and d[1] == c and cfv(a) == b then return end
                 cSyncMem[a] = {c, "v"}
                 a:Set({CurrentValue = b})
         end
@@ -1404,14 +1424,10 @@ xpcall(function()
                 if f then
                         if f.v then
                                 e.pw = f.v
-                                if not cfocus(cFpw) and cfv(cFpw) ~= f.v then csvl(cFpw, f.v) end
                         end
                         if f.m then
-                                local g = tostring(f.m)
-                                e.mu = g
+                                e.mu = tostring(f.m)
                                 e.mv = f.m
-                                local h = c8(f.m)
-                                if cFmulVals[h] and cfv(cFmul) ~= h then csdd(cFmul, cFmuls, h) end
                         end
                 end
                 if c25.md[a] and not c25.st[a] then
@@ -1450,16 +1466,19 @@ xpcall(function()
                         end
                 end
                 if not cfocus(cFpw) and cfv(cFpw) ~= (e.pw ~= "" and e.pw or "") then csvl(cFpw, e.pw ~= "" and e.pw or "") end
-                if e.ar and c12[a][e.ar] and cfv(cFarea) ~= cFareaLbls[e.ar] then
-                        csdd(cFarea, cFareaLbls, cFareaLbls[e.ar])
-                end
+                if not cfocus(cFob) and cfv(cFob) ~= (e.ob or "") then csvl(cFob, e.ob or "") end
+                csdd(cFarea, cFareaLbls, e.ar and c12[a][e.ar] and cFareaLbls[e.ar] or nil)
                 if c18[a] then
-                        if e.wt and c17[e.wt] then
-                                if cfv(cFwgt) ~= cFwgtLbls[e.wt] then csdd(cFwgt, cFwgtLbls, cFwgtLbls[e.wt]) end
-                        elseif cfv(cFwgt) and cfv(cFwgt) ~= "Not used" then
-                                csdd(cFwgt, cFwgtLbls, nil)
-                        end
+                        csdd(cFwgt, cFwgtLbls, e.wt and c17[e.wt] and cFwgtLbls[e.wt] or nil)
                 end
+                local g = e.mu and cFmulVals[e.mu] and e.mu or nil
+
+                if not g and e.mv then
+                        local h = c8(e.mv)
+                        g = cFmulVals[h] and h or nil
+                end
+
+                csdd(cFmul, cFmuls, g)
                 if b and not f then
                         cmsg("Farming", "Couldn't read your current stats. Put them manually or use Other Stats.")
                 end
@@ -1848,6 +1867,12 @@ xpcall(function()
                         end
                         if not cfocus(cTtpm) and cfv(cTtpm) ~= e then csvl(cTtpm, e) end
                 end
+                local e = c25.md.TK and c25.tok.cur or c25.tok.oth
+                if not b and not cfocus(cTtok) and cfv(cTtok) ~= (e.tk or "") then csvl(cTtok, e.tk or "") end
+                if not c and not cfocus(cTtpm) and cfv(cTtpm) ~= (e.tp or "") then csvl(cTtpm, e.tp or "") end
+                if not cfocus(cTtob) and cfv(cTtob) ~= (e.ob or "") then csvl(cTtob, e.ob or "") end
+                if not cfocus(cTtto) and cfv(cTtto) ~= (e.to or "") then csvl(cTtto, e.to or "") end
+                if not cfocus(cTtsp) and cfv(cTtsp) ~= (e.sp or "") then csvl(cTtsp, e.sp or "") end
                 if a and not b and not c then
                         cmsg("Tokens", "Couldn't read your current stats. Put them manually or use Other Stats.")
                 end
@@ -2048,10 +2073,15 @@ xpcall(function()
                 for _, e in ipairs(c13) do
                         local f = cMval(c25.ml.cur[e])
                         local g = cMels[e]
-                        if g and f and cfv(g) ~= ("x" .. c8(f)) then
-                                csdd(g, cMlist, "x" .. c8(f))
+                        if g then
+                                if f then
+                                        csdd(g, cMlist, "x" .. c8(f))
+                                else
+                                        csdd(g, cMlist, nil)
+                                end
                         end
                 end
+                csdd(cMobj, cMobjList, c25.ml.tm)
                 if a then
                         if c then
                                 if c25.msg.Multipliers ~= "" and c25.msg.Multipliers:find("Couldn't read", 1, true) then
