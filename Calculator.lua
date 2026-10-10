@@ -842,20 +842,34 @@ xpcall(function()
         }
         local cViewNames = {"Farming", "Tokens", "Multipliers", "Wiki", "Settings"}
 
-        task.defer(function()
-                for a, b in ipairs(cTabs) do
+        local cVlock = true
+        local cVarm = 0
+
+        local cVlink
+        cVlink = function(a)
+                a = (a or 0) + 1
+                local b = 0
+                for c, d in ipairs(cTabs) do
                         pcall(function()
-                                local c = b.Instances and b.Instances.Button and b.Instances.Button.Interact
-                                if c and not c:GetAttribute("cViewT") then
-                                        c:SetAttribute("cViewT", a)
-                                        c.MouseButton1Click:Connect(function()
-                                                c25.view = a
+                                local e = d.Instances and d.Instances.Button and d.Instances.Button.Interact
+                                if e and not e:GetAttribute("cViewT") then
+                                        e:SetAttribute("cViewT", c)
+                                        e.MouseButton1Click:Connect(function()
+                                                c25.view = c
+                                                cVarm = os.clock()
                                                 cq()
                                         end)
+                                        b = b + 1
                                 end
                         end)
                 end
-        end)
+                if b < #cTabs and a < 12 then
+                        task.delay(0.25, function()
+                                cVlink(a)
+                        end)
+                end
+        end
+        cVlink()
 
         local cUIok = false
 
@@ -2570,6 +2584,7 @@ xpcall(function()
                                         if c25.md.ML then cMsync(false) end
                                 end)
                                 pcall(function()
+                                        if cVlock or os.clock() - cVarm < 0.5 then return end
                                         local a = cTabs[1] and cTabs[1].Instances and cTabs[1].Instances.Page
                                         local b = a and a.Parent and a.Parent:FindFirstChildOfClass("UIPageLayout")
                                         local c = b and b.CurrentPage
@@ -2817,29 +2832,68 @@ xpcall(function()
 
         cSauto()
 
-        pcall(function()
-                local a = cTabs[c25.view] or cTabs[1]
-                if not a or not a.Instances then return end
-                local b = a.Instances.Page
-                local c = b and b.Parent and b.Parent:FindFirstChildOfClass("UIPageLayout")
-                if b and c then
+        local cVok = false
+        local function cVsync(a)
+                a = a or 0
+                if cVok or a >= 10 then
+                        cVlock = false
+                        return
+                end
+                pcall(function()
+                        local b = c6.Instance
+                        local c = b and b:FindFirstChild("Content")
+                        local d = c and c:FindFirstChild("ContentMain")
+                        local e = d and d:FindFirstChild("Elements")
+                        local f = e and e:FindFirstChild("HomeTab")
+                        if f then
+                                f:Destroy()
+                        end
+                end)
+                local b = cTabs[c25.view] or cTabs[1]
+                local c = b and b.Instances and b.Instances.Page
+                if not c or not c.Parent then
+                        task.delay(0.25, function()
+                                cVsync(a + 1)
+                        end)
+                        return
+                end
+                local d = c.Parent:FindFirstChildOfClass("UIPageLayout")
+                if d and d.CurrentPage ~= c then
                         pcall(function()
-                                c:JumpTo(b)
+                                d:JumpTo(c)
                         end)
                 end
-                local d = a.Instances.Button and a.Instances.Button.Interact
-                if d and getconnections then
-                        for _, e in ipairs(getconnections(d.MouseButton1Click)) do
+                local e = b.Instances.Button and b.Instances.Button.Interact
+                if e and getconnections then
+                        for _, f in ipairs(getconnections(e.MouseButton1Click)) do
                                 pcall(function()
-                                        e:Fire()
+                                        f:Fire()
                                 end)
                         end
                 end
-        end)
+                local g = cVarm
+                task.delay(0.3, function()
+                        if cVarm ~= g then
+                                cVok = true
+                                cVlock = false
+                                return
+                        end
+                        local h = c.Parent and c.Parent:FindFirstChildOfClass("UIPageLayout")
+                        if h and h.CurrentPage == c then
+                                cVok = true
+                                cVlock = false
+                                cVarm = os.clock()
+                        else
+                                cVsync(a + 1)
+                        end
+                end)
+        end
+        cVsync()
 
         c1.th[#c1.th + 1] = task.spawn(function()
                 for _ = 1, 5 do
                         task.wait(1)
+                        if getgenv().cLTR_State ~= c1 then break end
                         pcall(function()
                                 local a = cWindow.Instance
                                 local b = a and a:FindFirstChild("Content")
@@ -2851,25 +2905,12 @@ xpcall(function()
                                                 e:Destroy()
                                         end
                                 end
-                                local f = cTabs[1] and cTabs[1].Instances and cTabs[1].Instances.Page
-                                if cWindow.CurrentTab == nil and cTabs[1] and cTabs[1].Instances and cTabs[1].Instances.Button and cTabs[1].Instances.Button.Interact then
-                                        local i = cTabs[1].Instances.Button.Interact
-                                        if getconnections then
-                                                for _, j in ipairs(getconnections(i.MouseButton1Click)) do
-                                                        pcall(function()
-                                                                j:Fire()
-                                                        end)
-                                                end
-                                        else
-                                                local k = f and f.Parent and f.Parent:FindFirstChildOfClass("UIPageLayout")
-                                                if k and f then
-                                                        pcall(function()
-                                                                k:JumpTo(f)
-                                                        end)
-                                                end
-                                        end
-                                end
                         end)
+                        if not cVok then
+                                pcall(function()
+                                        cVsync(0)
+                                end)
+                        end
                 end
         end)
         task.delay(0.75, cTheal)
