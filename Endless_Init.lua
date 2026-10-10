@@ -1542,7 +1542,7 @@ e18(e1.Heartbeat, function()
             end
         end
     end
-    if e42.anchor and (c.Position - e42.anchor.Position).Magnitude > 30 then c.CFrame = e42.anchor end
+    if e42.anchor and (c.Position - e42.anchor.Position).Magnitude > 45 then c.CFrame = e42.anchor end
     if e10.stat == "FistStrength" then
         efr(eF)
     elseif e10.stat == "MovementSpeed" then
