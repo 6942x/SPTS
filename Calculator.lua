@@ -180,6 +180,11 @@ xpcall(function()
                 if g22 < 3 then
                         warn("[cLTR] Starlight tab-activate patch did not match the downloaded library source")
                 end
+                local g23
+                b, g23 = b:gsub('for _, option in ipairs%(NestedElement%.Values%.Options%) do%s+local optioninstance = Resources%.Elements%.DropdownPopup%.List%.Option_TEMPLATE:Clone%(%)', 'local cLSL = NestedElement.Instances[2].List:FindFirstChildOfClass("UIListLayout") if cLSL then cLSL.SortOrder = Enum.SortOrder.LayoutOrder end for i, option in ipairs(NestedElement.Values.Options) do local optioninstance = Resources.Elements.DropdownPopup.List.Option_TEMPLATE:Clone() optioninstance.LayoutOrder = i')
+                if g23 < 1 then
+                        warn("[cLTR] Starlight dropdown-order patch did not match the downloaded library source")
+                end
                 return b
         end
 
@@ -2844,6 +2849,44 @@ xpcall(function()
 
         cSauto()
 
+        local cVact
+        cVact = function(a)
+                pcall(function()
+                        for b, c in pairs(c6.Window.TabSections) do
+                                for d, e in pairs(c.Tabs) do
+                                        e.Active = false
+                                end
+                        end
+                end)
+                for b, c in ipairs(cTabs) do
+                        pcall(function()
+                                local d = c.Instances.Button
+                                local e = (c == a)
+                                local f = c6.CurrentTheme and c6.CurrentTheme.Foregrounds
+                                c.Active = e
+                                d.BackgroundTransparency = e and 0.5 or 1
+                                if d.Header then
+                                        d.Header.TextColor3 = d.Header:GetAttribute("cTabTint") or (e and f.Light or f.Medium)
+                                        local g = d.Header:FindFirstChild("AccentBrighter")
+                                        if g then g.Enabled = e or d.Header:GetAttribute("cTabTint") ~= nil end
+                                end
+                                if d.Icon then
+                                        d.Icon.ImageColor3 = e and f.Light or f.Medium
+                                        local g = d.Icon:FindFirstChild("AccentBrighter")
+                                        if g then g.Enabled = e end
+                                end
+                        end)
+                end
+                pcall(function()
+                        c6.Window.CurrentTab = a
+                end)
+                pcall(function()
+                        local b = a.Instances.Page.Parent:FindFirstChildOfClass("UIPageLayout")
+                        if b and b.CurrentPage ~= a.Instances.Page then
+                                b:JumpTo(a.Instances.Page)
+                        end
+                end)
+        end
         local cVok = false
         local function cVsync(a)
                 a = a or 0
@@ -2875,18 +2918,12 @@ xpcall(function()
                                 d:JumpTo(c)
                         end)
                 end
-                if type(b.Activate) == "function" then
-                        pcall(b.Activate, b)
-                else
-                        local e = b.Instances.Button and b.Instances.Button.Interact
-                        if e and getconnections then
-                                for _, f in ipairs(getconnections(e.MouseButton1Click)) do
-                                        pcall(function()
-                                                f:Fire()
-                                        end)
-                                end
+                local e = type(b.Activate) == "function" and pcall(b.Activate, b)
+                pcall(function()
+                        if not e or c6.Window.CurrentTab ~= b then
+                                cVact(b)
                         end
-                end
+                end)
                 local g = cVarm
                 task.delay(0.3, function()
                         if cVarm ~= g then
