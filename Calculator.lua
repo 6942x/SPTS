@@ -175,6 +175,11 @@ xpcall(function()
                 if g19 + g20 + g21 < 3 then
                         warn("[cLTR] Starlight notification-side patch did not match the downloaded library source")
                 end
+                local g22
+                b, g22 = b:gsub('Tab%.Instances%.Button%.Interact%["MouseButton1Click"%]:Connect%(Activate%)', 'Tab.Instances.Button.Interact["MouseButton1Click"]:Connect(Activate) function Tab:Activate() Activate() end')
+                if g22 < 3 then
+                        warn("[cLTR] Starlight tab-activate patch did not match the downloaded library source")
+                end
                 return b
         end
 
@@ -2870,12 +2875,16 @@ xpcall(function()
                                 d:JumpTo(c)
                         end)
                 end
-                local e = b.Instances.Button and b.Instances.Button.Interact
-                if e and getconnections then
-                        for _, f in ipairs(getconnections(e.MouseButton1Click)) do
-                                pcall(function()
-                                        f:Fire()
-                                end)
+                if type(b.Activate) == "function" then
+                        pcall(b.Activate, b)
+                else
+                        local e = b.Instances.Button and b.Instances.Button.Interact
+                        if e and getconnections then
+                                for _, f in ipairs(getconnections(e.MouseButton1Click)) do
+                                        pcall(function()
+                                                f:Fire()
+                                        end)
+                                end
                         end
                 end
                 local g = cVarm
