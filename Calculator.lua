@@ -168,6 +168,13 @@ xpcall(function()
                 if g18c < 1 then
                         warn("[cLTR] Starlight dropdown-reopen-toggle patch did not match the downloaded library source")
                 end
+                local g19, g20, g21
+                b, g19 = b:gsub('StarlightUI%.MainWindow%.Visible = false%s+StarlightUI%.MainWindow%.AnchorPoint = Vector2%.zero', 'StarlightUI.MainWindow.Visible = false StarlightUI.MainWindow.AnchorPoint = Vector2.zero pcall(function() local cN = StarlightUI:FindFirstChild("Notifications") if cN then cN.AnchorPoint = Vector2.new(0, 1) cN.Position = UDim2.new(0, 20, 1, -20) end end)')
+                b, g20 = b:gsub('StarlightUI%.Notifications%.Position = UDim2%.new%(1, %-20, 1, %-%(24 %+ jumpButton%.AbsoluteSize%.Y%)%)', 'StarlightUI.Notifications.AnchorPoint = Vector2.new(0, 1) StarlightUI.Notifications.Position = UDim2.new(0, 20, 1, -(24 + jumpButton.AbsoluteSize.Y))')
+                b, g21 = b:gsub('StarlightUI%.Notifications%.Position = UDim2%.new%(1, %-20, 1, %-20%)', 'StarlightUI.Notifications.AnchorPoint = Vector2.new(0, 1) StarlightUI.Notifications.Position = UDim2.new(0, 20, 1, -20)')
+                if g19 + g20 + g21 < 3 then
+                        warn("[cLTR] Starlight notification-side patch did not match the downloaded library source")
+                end
                 return b
         end
 
