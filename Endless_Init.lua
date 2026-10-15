@@ -1,4 +1,4 @@
-local e  = game:GetService("Players")
+local e = game:GetService("Players")
 local e1 = game:GetService("RunService")
 local e2 = game:GetService("HttpService")
 
@@ -10,613 +10,730 @@ if not e4 then
     return
 end
 
-local eG = typeof(getgenv) == "function" and getgenv() or _G
+local e5 = typeof(getgenv) == "function" and getgenv() or _G
 
-
-local function ecl(a)
-    if typeof(a) ~= "table" or a.dead then return end
-    a.dead = true
-    if typeof(a.unload) == "function" then pcall(a.unload) end
-    for _, b in pairs(a.th or {}) do
-        if typeof(b) == "thread" and coroutine.status(b) ~= "dead" then pcall(task.cancel, b) end
+local function e6(e7)
+    if typeof(e7) ~= "table" or e7.dead then
+        return
     end
-    for _, b in pairs(a.cn or {}) do pcall(b.Disconnect, b) end
-    a.th = {}
-    a.cn = {}
-    if typeof(a.gui) == "Instance" then pcall(a.gui.Destroy, a.gui) end
-    if eG.eSPTS_ObsidianRegistry == a then eG.eSPTS_ObsidianRegistry = nil end
+    e7.dead = true
+    if typeof(e7.unload) == "function" then
+        pcall(e7.unload)
+    end
+    for e8, e9 in pairs(e7.th or {}) do
+        if typeof(e9) == "thread" and coroutine.status(e9) ~= "dead" then
+            pcall(task.cancel, e9)
+        end
+    end
+    for e8, e9 in pairs(e7.cn or {}) do
+        pcall(e9.Disconnect, e9)
+    end
+    e7.th = {}
+    e7.cn = {}
+    if typeof(e7.gui) == "Instance" then
+        pcall(e7.gui.Destroy, e7.gui)
+    end
+    if e5.eSPTS_ObsidianRegistry == e7 then
+        e5.eSPTS_ObsidianRegistry = nil
+    end
 end
 
-
-local function esw(a)
-    local b = {}
-    local c, d = pcall(function() return typeof(gethui) == "function" and gethui() or nil end)
-    if c and typeof(d) == "Instance" then b[#b + 1] = d end
-    local f, g = pcall(function() return game:GetService("CoreGui") end)
-    if f and typeof(g) == "Instance" then b[#b + 1] = g end
-    local h, i = pcall(function() return e4:FindFirstChildOfClass("PlayerGui") end)
-    if h and typeof(i) == "Instance" then b[#b + 1] = i end
-    for _, j in ipairs(b) do
-        for _, k in ipairs(j:GetChildren()) do
-            if k ~= a and k:IsA("ScreenGui") and (k.Name == "Obsidian" or k.Name == "eSPTS") then
-                pcall(k.Destroy, k)
+local function e10(e7)
+    local e9 = {}
+    local e11, e12 = pcall(function()
+        return typeof(gethui) == "function" and gethui() or nil
+    end)
+    if e11 and typeof(e12) == "Instance" then
+        e9[#e9 + 1] = e12
+    end
+    local e13, e14 = pcall(function()
+        return game:GetService("CoreGui")
+    end)
+    if e13 and typeof(e14) == "Instance" then
+        e9[#e9 + 1] = e14
+    end
+    local e15, e16 = pcall(function()
+        return e4:FindFirstChildOfClass("PlayerGui")
+    end)
+    if e15 and typeof(e16) == "Instance" then
+        e9[#e9 + 1] = e16
+    end
+    for e8, e17 in ipairs(e9) do
+        for e8, e18 in ipairs(e17:GetChildren()) do
+            if e18 ~= e7 and e18:IsA("ScreenGui") and (e18.Name == "Obsidian" or e18.Name == "eSPTS") then
+                pcall(e18.Destroy, e18)
             end
         end
     end
 end
 
+e6(e5.eSPTS_ObsidianRegistry)
+e10(nil)
 
-ecl(eG.eSPTS_ObsidianRegistry)
-esw(nil)
+local e19 = { cn = {}, th = {}, dead = false }
+e5.eSPTS_ObsidianRegistry = e19
 
-local e7 = { cn = {}, th = {}, dead = false }
-eG.eSPTS_ObsidianRegistry = e7
-
-local function egd()
-    if e7.dead then return false end
-    return eG.eSPTS_ObsidianRegistry == e7
-end
-
-
-local function er(a, b, c)
-    c = c or 30
-    local d = a:WaitForChild(b, c)
-    if not d then
-        warn("[eSPTS] timeout '" .. b .. "' in " .. a:GetFullName())
-        error("[eSPTS] '" .. b .. "' not found - wrong game or updated instances", 0)
+local function e20()
+    if e19.dead then
+        return false
     end
-    return d
+    return e5.eSPTS_ObsidianRegistry == e19
 end
 
-local e5 = er(e4, "PlayerGui")
-local e6 = er(e5, "ScreenGui")
-
-if not egd() then return end
-
-local e13 = er(game:GetService("ReplicatedStorage"), "RemoteEvent")
-local e14 = er(er(e6, "MenuFrame"), "InfoFrame")
-local e15 = er(er(workspace, "Map"), "Training_Collisions")
-
-if not egd() then return end
-
-local function efr(a)
-    e13:FireServer(a)
+local function e21(e7, e9, e11)
+    e11 = e11 or 30
+    local e12 = e7:WaitForChild(e9, e11)
+    if not e12 then
+        warn("[eSPTS] timeout '" .. e9 .. "' in " .. e7:GetFullName())
+        error("[eSPTS] '" .. e9 .. "' not found - wrong game or updated instances", 0)
+    end
+    return e12
 end
 
-local eF = { "Add_FS_Request" }
-local eM = { "Add_MS_Request" }
-local eJ = { "Add_JF_Request" }
+local e22 = e21(e4, "PlayerGui")
+local e23 = e21(e22, "ScreenGui")
 
+if not e20() then
+    return
+end
 
-local e8, e9 = e4.Name, e4.UserId
-if not e8 or e8 == "" then
+local e24 = e21(game:GetService("ReplicatedStorage"), "RemoteEvent")
+local e25 = e21(e21(e23, "MenuFrame"), "InfoFrame")
+local e26 = e21(e21(workspace, "Map"), "Training_Collisions")
+
+if not e20() then
+    return
+end
+
+local function e27(e7)
+    e24:FireServer(e7)
+end
+
+local e28 = { "Add_FS_Request" }
+local e29 = { "Add_MS_Request" }
+local e30 = { "Add_JF_Request" }
+
+local e31, e32 = e4.Name, e4.UserId
+if not e31 or e31 == "" then
     repeat
-        e8 = e4.Name
+        e31 = e4.Name
         task.wait()
-    until e8 and e8 ~= ""
+    until e31 and e31 ~= ""
 end
 
-if not egd() then return end
+if not e20() then
+    return
+end
 
-
-local e10 = {
-    key    = "G",
-    stat   = nil,
+local e33 = {
+    key = "G",
+    stat = nil,
     weight = false,
-    as     = true,
-    tab    = "Auto Farm",
-    save   = nil,
-    mode   = nil,
-    hide   = false,
-    rsp    = false,
-    rtype  = "Normal",
-    alsm   = nil,
-    ui     = nil
+    as = true,
+    tab = "Auto Farm",
+    save = nil,
+    mode = nil,
+    hide = false,
+    rsp = false,
+    rtype = "Normal",
+    alsm = nil,
+    ui = nil,
 }
 
-local e11 = "eSPTS_Obsidian/Accounts/" .. e8 .. ".json"
-local e12 = { t = 0, f = false }
+local e34 = "eSPTS_Obsidian/Accounts/" .. e31 .. ".json"
+local e35 = { t = 0, f = false }
 
-
-local function edr()
-    if not makefolder or not isfolder then return end
-    if not isfolder("eSPTS_Obsidian") then makefolder("eSPTS_Obsidian") end
-    if not isfolder("eSPTS_Obsidian/Accounts") then makefolder("eSPTS_Obsidian/Accounts") end
+local function e36()
+    if not makefolder or not isfolder then
+        return
+    end
+    if not isfolder("eSPTS_Obsidian") then
+        makefolder("eSPTS_Obsidian")
+    end
+    if not isfolder("eSPTS_Obsidian/Accounts") then
+        makefolder("eSPTS_Obsidian/Accounts")
+    end
 end
 
-local function esv()
-    if not egd() or not writefile then return false end
-    edr()
-    local a = e10.save and { e10.save:GetComponents() } or nil
-    local b = {
-        uid    = e9,
-        name   = e8,
-        key    = e10.key,
-        stat   = e10.stat,
-        weight = e10.weight,
-        as     = e10.as,
-        tab    = e10.tab,
-        save   = a,
-        mode   = e10.mode,
-        hide   = e10.hide,
-        rsp    = e10.rsp,
-        rtype  = e10.rtype,
-        alsm   = e10.alsm,
-        ui     = e10.ui
+local function e37()
+    if not e20() or not writefile then
+        return false
+    end
+    e36()
+    local e7 = e33.save and { e33.save:GetComponents() } or nil
+    local e9 = {
+        uid = e32,
+        name = e31,
+        key = e33.key,
+        stat = e33.stat,
+        weight = e33.weight,
+        as = e33.as,
+        tab = e33.tab,
+        save = e7,
+        mode = e33.mode,
+        hide = e33.hide,
+        rsp = e33.rsp,
+        rtype = e33.rtype,
+        alsm = e33.alsm,
+        ui = e33.ui,
     }
-    local c = pcall(function() writefile(e11, e2:JSONEncode(b)) end)
-    if e7.smSave then pcall(e7.smSave) end
-    if c then
-        e12.t = tick()
-        e12.f = false
+    local e11 = pcall(function()
+        writefile(e34, e2:JSONEncode(e9))
+    end)
+    if e19.smSave then
+        pcall(e19.smSave)
+    end
+    if e11 then
+        e35.t = tick()
+        e35.f = false
         return true
     end
-    e12.f = false
+    e35.f = false
     return false
 end
 
-local function esq()
-    if e12.f then return end
-    e12.f = true
-    local a = tick() - e12.t
-    if a >= 0.1 then
-        esv()
+local function e38()
+    if e35.f then
+        return
+    end
+    e35.f = true
+    local e7 = tick() - e35.t
+    if e7 >= 0.1 then
+        e37()
     else
-        task.delay(0.1 - a, function()
-            if e12.f then esv() end
+        task.delay(0.1 - e7, function()
+            if e35.f then
+                e37()
+            end
         end)
     end
 end
 
-local function eui(a, b)
-    if typeof(e10.ui) ~= "table" then e10.ui = {} end
-    if e10.ui[a] == b then return end
-    e10.ui[a] = b
-    esq()
+local function e39(e7, e9)
+    if typeof(e33.ui) ~= "table" then
+        e33.ui = {}
+    end
+    if e33.ui[e7] == e9 then
+        return
+    end
+    e33.ui[e7] = e9
+    e38()
 end
 
-local function eld()
-    if not readfile or not isfile or not isfile(e11) then return false end
-    local a, b = pcall(function() return e2:JSONDecode(readfile(e11)) end)
-    if not a or typeof(b) ~= "table" or b.uid ~= e9 then return false end
-    e10.key = typeof(b.key) == "string" and b.key ~= "" and b.key or "G"
-    if not pcall(function() return Enum.KeyCode[e10.key] end) then e10.key = "G" end
-    e10.stat = b.stat
-    e10.weight = b.weight or false
-    e10.as = b.as ~= nil and b.as or true
-    e10.tab = b.tab or "Auto Farm"
-    if e10.tab == "Position Man" then e10.tab = "Position Manager" end
-    if typeof(b.save) == "table" and #b.save == 12 then e10.save = CFrame.new(unpack(b.save)) end
-    e10.mode = b.mode
-    e10.rsp = b.rsp == true
-    e10.rtype = (b.rtype == "Risky" or b.rtype == "Normal") and b.rtype or "Normal"
-    e10.hide = b.hide or false
-    e10.alsm = typeof(b.alsm) == "string" and b.alsm ~= "" and b.alsm or nil
-    e10.ui = typeof(b.ui) == "table" and b.ui or nil
+local function e40()
+    if not readfile or not isfile or not isfile(e34) then
+        return false
+    end
+    local e7, e9 = pcall(function()
+        return e2:JSONDecode(readfile(e34))
+    end)
+    if not e7 or typeof(e9) ~= "table" or e9.uid ~= e32 then
+        return false
+    end
+    e33.key = typeof(e9.key) == "string" and e9.key ~= "" and e9.key or "G"
+    if not pcall(function()
+        return Enum.KeyCode[e33.key]
+    end) then
+        e33.key = "G"
+    end
+    e33.stat = table.find(
+        { "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" },
+        e9.stat
+    ) and e9.stat or nil
+    e33.weight = e9.weight or false
+    e33.as = e9.as ~= false
+    e33.tab = e9.tab or "Auto Farm"
+    if e33.tab == "Position Man" then
+        e33.tab = "Position Manager"
+    end
+    if typeof(e9.save) == "table" and #e9.save == 12 then
+        e33.save = CFrame.new(unpack(e9.save))
+    end
+    e33.mode = e9.mode
+    e33.rsp = e9.rsp == true
+    e33.rtype = (e9.rtype == "Risky" or e9.rtype == "Normal") and e9.rtype or "Normal"
+    e33.hide = e9.hide or false
+    e33.alsm = typeof(e9.alsm) == "string" and e9.alsm ~= "" and e9.alsm or nil
+    e33.ui = typeof(e9.ui) == "table" and e9.ui or nil
     return true
 end
 
-local e49 = eld()
+local e41 = e40()
 
-
-local function e16(a)
-    local b = e7.th[a]
-    if not b then return end
-    e7.th[a] = nil
-    if typeof(b) == "thread" and coroutine.status(b) ~= "dead" then pcall(task.cancel, b) end
+local function e42(e7)
+    local e9 = e19.th[e7]
+    if not e9 then
+        return
+    end
+    e19.th[e7] = nil
+    if typeof(e9) == "thread" and coroutine.status(e9) ~= "dead" then
+        pcall(task.cancel, e9)
+    end
 end
 
-local function e17(a, b)
-    e16(a)
-    e7.th[a] = task.spawn(b)
+local function e43(e7, e9)
+    e42(e7)
+    e19.th[e7] = task.spawn(e9)
 end
 
-local function e18(a, b)
-    local c = a:Connect(b)
-    e7.cn[#e7.cn + 1] = c
-    return c
+local function e44(e7, e9)
+    local e11 = e7:Connect(e9)
+    e19.cn[#e19.cn + 1] = e11
+    return e11
 end
 
-local e19
+local e45
 do
-    local a = {}
-    e19 = function(b, c)
-        if a[b] then return false end
-        a[b] = true
-        task.delay(c or 0.3, function() a[b] = false end)
+    local e7 = {}
+    e45 = function(e9, e11)
+        if e7[e9] then
+            return false
+        end
+        e7[e9] = true
+        task.delay(e11 or 0.3, function()
+            e7[e9] = false
+        end)
         return true
     end
 end
 
-local e20 = {}
-local e21
+local e46 = {}
+local e47
 
-local function e22(a)
-    local b = os.date and os.date("%H:%M:%S") or "\xe2\x80\x94"
-    e20[#e20 + 1] = { t = b, m = a }
-    if #e20 > 40 then table.remove(e20, 1) end
-    if e21 then e21() end
+local function e48(e7)
+    local e9 = os.date and os.date("%H:%M:%S") or "\xe2\x80\x94"
+    e46[#e46 + 1] = { t = e9, m = e7 }
+    if #e46 > 40 then
+        table.remove(e46, 1)
+    end
+    if e47 then
+        e47()
+    end
 end
-local e23 = {
+local e49 = {
     FistStrength = {
-        TrainingArea_2  = { req = "0e0",    multi = "x1e1"    },
-        TrainingArea_3  = { req = "1e6",    multi = "x1e2"    },
-        StarFSTraining1 = { req = "1e9",    multi = "x2e3"    },
-        StarFSTraining2 = { req = "1e11",   multi = "x4e4"    },
-        StarFSTraining3 = { req = "1e13",   multi = "x8e5"    },
-        AFK_FS_1        = { req = "1e15",   multi = "x6e6"    },
-        AFK_FS_2        = { req = "1e17",   multi = "x3e8"    },
-        AFK_FS_3        = { req = "1.5e19", multi = "x2.1e10" },
-        AFK_FS_4        = { req = "2.5e21", multi = "x2.308e12" },
-        AFK_FS_5        = { req = "1e24",   multi = "x3.475e14" },
-        AFK_FS_6        = { req = "5e26",   multi = "x5.2e16" },
-        AFK_FS_7        = { req = "2.5e29", multi = "x7.8e18" },
-        AFK_FS_8        = { req = "1.5e32", multi = "??" },
-        AFK_FS_9        = { req = "5.5e34", multi = "??" },
-        AFK_FS_10       = { req = "3e37",   multi = "??" },
-        AFK_FS_11       = { req = "1.1e40", multi = "??" }
+        TrainingArea_2 = { req = "0e0", multi = "x1e1" },
+        TrainingArea_3 = { req = "1e6", multi = "x1e2" },
+        StarFSTraining1 = { req = "1e9", multi = "x2e3" },
+        StarFSTraining2 = { req = "1e11", multi = "x4e4" },
+        StarFSTraining3 = { req = "1e13", multi = "x8e5" },
+        AFK_FS_1 = { req = "1e15", multi = "x6e6" },
+        AFK_FS_2 = { req = "1e17", multi = "x3e8" },
+        AFK_FS_3 = { req = "1.5e19", multi = "x2.1e10" },
+        AFK_FS_4 = { req = "2.5e21", multi = "x2.308e12" },
+        AFK_FS_5 = { req = "1e24", multi = "x3.475e14" },
+        AFK_FS_6 = { req = "5e26", multi = "x5.2e16" },
+        AFK_FS_7 = { req = "2.5e29", multi = "x7.8e18" },
+        AFK_FS_8 = { req = "1.5e32", multi = "??" },
+        AFK_FS_9 = { req = "5.5e34", multi = "??" },
+        AFK_FS_10 = { req = "3e37", multi = "??" },
+        AFK_FS_11 = { req = "1.1e40", multi = "??" },
     },
     BodyToughness = {
-        FireBathTouchPart = { req = "5e2",      multi = "x1e1" },
-        Water             = { req = "5e0",      multi = "x5e0" },
-        IcePart           = { req = "5e3",      multi = "x2e1" },
-        LavaPart          = { req = "5e5",      multi = "x1e2" },
-        TornadoTouchPart  = { req = "5e4",      multi = "x5e1" },
-        GreenFirePart     = { req = "5e7",      multi = "x2e3" },
-        AcidPart          = { req = "5e9",      multi = "x4e4" },
-        LavaPart2         = { req = "5e11",     multi = "x8e5" },
-        AFK_BT_1          = { req = "7.383e12", multi = "x6e6" },
-        AFK_BT_2          = { req = "6.55e14",  multi = "x1.8e8" },
-        AFK_BT_3          = { req = "6.66e16",  multi = "x5.5e9" },
-        AFK_BT_4          = { req = "5.1e18",   multi = "x1.625e11" },
-        AFK_BT_5          = { req = "4.6e20",   multi = "x5e12" },
-        AFK_BT_6          = { req = "4.005e22", multi = "x1.5e14" },
-        AFK_BT_7          = { req = "3.55e24",  multi = "x4.5e15" },
-        AFK_BT_8          = { req = "3.14e26",  multi = "x1.312e17" },
-        AFK_BT_9          = { req = "2.778e28", multi = "x3.925e18" },
-        AFK_BT_10         = { req = "2.473e30", multi = "x1.18e20" },
-        AFK_BT_11         = { req = "2.175e32", multi = "x3.55e21" },
-        AFK_BT_12         = { req = "1.95e34",  multi = "x1.062e23" },
-        AFK_BT_13         = { req = "1.7e36",   multi = "x3.2e24" },
-        AFK_BT_14         = { req = "1.55e38",  multi = "x9.574e25" },
-        AFK_BT_15         = { req = "1.356e40", multi = "x2.5e27" }
+        FireBathTouchPart = { req = "5e2", multi = "x1e1" },
+        Water = { req = "5e0", multi = "x5e0" },
+        IcePart = { req = "5e3", multi = "x2e1" },
+        LavaPart = { req = "5e5", multi = "x1e2" },
+        TornadoTouchPart = { req = "5e4", multi = "x5e1" },
+        GreenFirePart = { req = "5e7", multi = "x2e3" },
+        AcidPart = { req = "5e9", multi = "x4e4" },
+        LavaPart2 = { req = "5e11", multi = "x8e5" },
+        AFK_BT_1 = { req = "7.383e12", multi = "x6e6" },
+        AFK_BT_2 = { req = "6.55e14", multi = "x1.8e8" },
+        AFK_BT_3 = { req = "6.66e16", multi = "x5.5e9" },
+        AFK_BT_4 = { req = "5.1e18", multi = "x1.625e11" },
+        AFK_BT_5 = { req = "4.6e20", multi = "x5e12" },
+        AFK_BT_6 = { req = "4.005e22", multi = "x1.5e14" },
+        AFK_BT_7 = { req = "3.55e24", multi = "x4.5e15" },
+        AFK_BT_8 = { req = "3.14e26", multi = "x1.312e17" },
+        AFK_BT_9 = { req = "2.778e28", multi = "x3.925e18" },
+        AFK_BT_10 = { req = "2.473e30", multi = "x1.18e20" },
+        AFK_BT_11 = { req = "2.175e32", multi = "x3.55e21" },
+        AFK_BT_12 = { req = "1.95e34", multi = "x1.062e23" },
+        AFK_BT_13 = { req = "1.7e36", multi = "x3.2e24" },
+        AFK_BT_14 = { req = "1.55e38", multi = "x9.574e25" },
+        AFK_BT_15 = { req = "1.356e40", multi = "x2.5e27" },
     },
     MovementSpeed = {
-        AFK_MS_1  = { req = "1e14",    multi = "x1.3e6" },
-        AFK_MS_2  = { req = "2.22e15", multi = "x1.69e7" },
-        AFK_MS_3  = { req = "6e16",    multi = "x2.197e8" },
-        AFK_MS_4  = { req = "1.5e18",  multi = "x2.85e9" },
-        AFK_MS_5  = { req = "4e19",    multi = "x3.72e10" },
-        AFK_MS_6  = { req = "1e21",    multi = "x4.824e11" },
-        AFK_MS_7  = { req = "2.5e22",  multi = "x6.274e12" },
-        AFK_MS_8  = { req = "7.5e23",  multi = "x8.15e13" },
-        AFK_MS_9  = { req = "1.55e25", multi = "x2.12e15" },
-        AFK_MS_10 = { req = "4e26",    multi = "x1.377e16" },
-        AFK_MS_11 = { req = "1e28",    multi = "x1.792e17" }
+        AFK_MS_1 = { req = "1e14", multi = "x1.3e6" },
+        AFK_MS_2 = { req = "2.22e15", multi = "x1.69e7" },
+        AFK_MS_3 = { req = "6e16", multi = "x2.197e8" },
+        AFK_MS_4 = { req = "1.5e18", multi = "x2.85e9" },
+        AFK_MS_5 = { req = "4e19", multi = "x3.72e10" },
+        AFK_MS_6 = { req = "1e21", multi = "x4.824e11" },
+        AFK_MS_7 = { req = "2.5e22", multi = "x6.274e12" },
+        AFK_MS_8 = { req = "7.5e23", multi = "x8.15e13" },
+        AFK_MS_9 = { req = "1.55e25", multi = "x2.12e15" },
+        AFK_MS_10 = { req = "4e26", multi = "x1.377e16" },
+        AFK_MS_11 = { req = "1e28", multi = "x1.792e17" },
     },
     JumpForce = {
-        AFK_JF_1 = { req = "1e14",   multi = "x1.7e6" },
-        AFK_JF_2 = { req = "5e15",   multi = "x3.05e7" },
+        AFK_JF_1 = { req = "1e14", multi = "x1.7e6" },
+        AFK_JF_2 = { req = "5e15", multi = "x3.05e7" },
         AFK_JF_3 = { req = "1.5e17", multi = "x5.5e8" },
-        AFK_JF_4 = { req = "5e18",   multi = "x9.92e9" },
-        AFK_JF_5 = { req = "2e20",   multi = "??" },
-        AFK_JF_6 = { req = "1e22",   multi = "??" },
-        AFK_JF_7 = { req = "3e23",   multi = "??" },
+        AFK_JF_4 = { req = "5e18", multi = "x9.92e9" },
+        AFK_JF_5 = { req = "2e20", multi = "??" },
+        AFK_JF_6 = { req = "1e22", multi = "??" },
+        AFK_JF_7 = { req = "3e23", multi = "??" },
         AFK_JF_8 = { req = "1.5e25", multi = "??" },
-        AFK_JF_9 = { req = "4e26",   multi = "??" }
+        AFK_JF_9 = { req = "4e26", multi = "??" },
     },
     PsychicPower = {
-        PPTrainingPart1 = { req = "1e6",     multi = "x1e2" },
-        PPTrainingPart2 = { req = "1e9",     multi = "x1e4" },
-        PPTrainingPart3 = { req = "1e12",    multi = "x1e6" },
-        PPTrainingPart4 = { req = "1e15",    multi = "x1e8" },
-        AFK_PP_1        = { req = "3.33e17", multi = "x2.5e9" },
-        AFK_PP_2        = { req = "1.11e20", multi = "x2.5e11" },
-        AFK_PP_3        = { req = "3.33e22", multi = "x2.5e13" },
-        AFK_PP_4        = { req = "1.11e25", multi = "x2.5e15" },
-        AFK_PP_5        = { req = "3.36e27", multi = "x2.5e17" },
-        AFK_PP_6        = { req = "1.11e30", multi = "x2.5e19" },
-        AFK_PP_7        = { req = "4.44e32", multi = "x2.5e21" },
-        AFK_PP_8        = { req = "1.11e35", multi = "??" },
-        AFK_PP_9        = { req = "5.55e37", multi = "??" },
-        AFK_PP_10       = { req = "2.22e40", multi = "??" }
-    }
+        PPTrainingPart1 = { req = "1e6", multi = "x1e2" },
+        PPTrainingPart2 = { req = "1e9", multi = "x1e4" },
+        PPTrainingPart3 = { req = "1e12", multi = "x1e6" },
+        PPTrainingPart4 = { req = "1e15", multi = "x1e8" },
+        AFK_PP_1 = { req = "3.33e17", multi = "x2.5e9" },
+        AFK_PP_2 = { req = "1.11e20", multi = "x2.5e11" },
+        AFK_PP_3 = { req = "3.33e22", multi = "x2.5e13" },
+        AFK_PP_4 = { req = "1.11e25", multi = "x2.5e15" },
+        AFK_PP_5 = { req = "3.36e27", multi = "x2.5e17" },
+        AFK_PP_6 = { req = "1.11e30", multi = "x2.5e19" },
+        AFK_PP_7 = { req = "4.44e32", multi = "x2.5e21" },
+        AFK_PP_8 = { req = "1.11e35", multi = "??" },
+        AFK_PP_9 = { req = "5.55e37", multi = "??" },
+        AFK_PP_10 = { req = "2.22e40", multi = "??" },
+    },
 }
 
-local e24 = {
-    { n = "1e2 LB",   m = 1e2,      j = 5e3 },
-    { n = "1e0 TON",  m = 5e3,      j = 2e5 },
-    { n = "1e1 TON",  m = 5e5,      j = 2e6 },
-    { n = "1e2 TON",  m = 1e7,      j = 1e7 },
-    { n = "1e3 TON",  m = 1e8,      j = 2e8 },
-    { n = "1e4 TON",  m = 1e9,      j = 1e9 },
-    { n = "1e5 TON",  m = 1e10,     j = 1e10 },
-    { n = "1e6 TON",  m = 1e11,     j = 1e11 },
-    { n = "1e7 TON",  m = 1e12,     j = 1e12 },
-    { n = "1e9 TON",  m = 1e13,     j = 1e13 },
-    { n = "1e11 TON", m = 2.56e28,  j = 1.54e28 },
-    { n = "1e13 TON", m = 0e0,      j = 6e26 },
-    { n = "1e15 TON", m = 1.68e32,  j = 2.221e31 },
+local e50 = {
+    { n = "1e2 LB", m = 1e2, j = 5e3 },
+    { n = "1e0 TON", m = 5e3, j = 2e5 },
+    { n = "1e1 TON", m = 5e5, j = 2e6 },
+    { n = "1e2 TON", m = 1e7, j = 1e7 },
+    { n = "1e3 TON", m = 1e8, j = 2e8 },
+    { n = "1e4 TON", m = 1e9, j = 1e9 },
+    { n = "1e5 TON", m = 1e10, j = 1e10 },
+    { n = "1e6 TON", m = 1e11, j = 1e11 },
+    { n = "1e7 TON", m = 1e12, j = 1e12 },
+    { n = "1e9 TON", m = 1e13, j = 1e13 },
+    { n = "1e11 TON", m = 2.56e28, j = 1.54e28 },
+    { n = "1e13 TON", m = 0e0, j = 6e26 },
+    { n = "1e15 TON", m = 1.68e32, j = 2.221e31 },
     { n = "1e17 TON", m = 4.288e33, j = 8.48e31 },
     { n = "1e19 TON", m = 1.082e34, j = 3.226e33 },
     { n = "1e21 TON", m = 2.823e36, j = 1.229e36 },
-    { n = "1e23 TON", m = 7.02e37,  j = 4.683e37 },
+    { n = "1e23 TON", m = 7.02e37, j = 4.683e37 },
     { n = "1e25 TON", m = 1.852e39, j = 1.785e39 },
-    { n = "1e28 TON", m = 4.744e39, j = 6.8e39 }
+    { n = "1e28 TON", m = 4.744e39, j = 6.8e39 },
 }
 
-local e25 = {
-    { "K",    1e3   },
-    { "M",    1e6   },
-    { "B",    1e9   },
-    { "T",    1e12  },
-    { "Qa",   1e15  },
-    { "Qi",   1e18  },
-    { "Sx",   1e21  },
-    { "Sp",   1e24  },
-    { "Oc",   1e27  },
-    { "No",   1e30  },
-    { "Dc",   1e33  },
-    { "Ud",   1e36  },
-    { "Dd",   1e39  },
-    { "Td",   1e42  },
-    { "Qad",  1e45  },
-    { "Qid",  1e48  },
-    { "Sxd",  1e51  },
-    { "Spd",  1e54  },
-    { "Ocd",  1e57  },
-    { "Nod",  1e60  },
-    { "Vg",   1e63  },
-    { "Uvg",  1e66  },
-    { "Dvg",  1e69  },
-    { "Tvg",  1e72  },
-    { "Qavg", 1e75  },
-    { "Qivg", 1e78  },
-    { "Sxvg", 1e81  },
-    { "Spvg", 1e84  },
-    { "Ocvg", 1e87  },
-    { "Novg", 1e90  },
-    { "Tg",   1e93  },
-    { "Utg",  1e96  },
-    { "Dtg",  1e99  },
-    { "Ttg",  1e102 },
+local e51 = {
+    { "K", 1e3 },
+    { "M", 1e6 },
+    { "B", 1e9 },
+    { "T", 1e12 },
+    { "Qa", 1e15 },
+    { "Qi", 1e18 },
+    { "Sx", 1e21 },
+    { "Sp", 1e24 },
+    { "Oc", 1e27 },
+    { "No", 1e30 },
+    { "Dc", 1e33 },
+    { "Ud", 1e36 },
+    { "Dd", 1e39 },
+    { "Td", 1e42 },
+    { "Qad", 1e45 },
+    { "Qid", 1e48 },
+    { "Sxd", 1e51 },
+    { "Spd", 1e54 },
+    { "Ocd", 1e57 },
+    { "Nod", 1e60 },
+    { "Vg", 1e63 },
+    { "Uvg", 1e66 },
+    { "Dvg", 1e69 },
+    { "Tvg", 1e72 },
+    { "Qavg", 1e75 },
+    { "Qivg", 1e78 },
+    { "Sxvg", 1e81 },
+    { "Spvg", 1e84 },
+    { "Ocvg", 1e87 },
+    { "Novg", 1e90 },
+    { "Tg", 1e93 },
+    { "Utg", 1e96 },
+    { "Dtg", 1e99 },
+    { "Ttg", 1e102 },
     { "Qatg", 1e105 },
     { "Qitg", 1e108 },
     { "Sxtg", 1e111 },
     { "Sptg", 1e114 },
     { "Octg", 1e117 },
-    { "Notg", 1e120 }
+    { "Notg", 1e120 },
 }
 
-
-local function e26(a)
-    if not a then return 0 end
-    local b = tonumber(a)
-    if b then return b end
-    local c = tostring(a):gsub("%s+", "")
-    local d, e = c:match("([%d%.]+)(%a*)$")
-    local f = tonumber(d) or 0
-    if e == "" then return f end
-    for _, g in ipairs(e25) do
-        if g[1] == e then return f * g[2] end
+local function e52(e7)
+    if not e7 then
+        return 0
     end
-    return f
+    local e9 = tonumber(e7)
+    if e9 then
+        return e9
+    end
+    local e11 = tostring(e7):gsub("[,%s]", "")
+    local e12, e = e11:match("([%d%.]+)(%a*)$")
+    local e13 = tonumber(e12) or 0
+    if e == "" then
+        return e13
+    end
+    for e8, e14 in ipairs(e51) do
+        if e14[1] == e then
+            return e13 * e14[2]
+        end
+    end
+    return e13
 end
 
-local function eab(a)
-    local b = tonumber(a)
-    if not b then return tostring(a) end
-    if b < 1000 then return string.format("%g", b) end
-    local c, d
-    for _, e in ipairs(e25) do
-        if b >= e[2] then c, d = e[1], e[2] end
+local function e53(e7)
+    local e9 = tonumber(e7)
+    if not e9 then
+        return tostring(e7)
     end
-    local f = b / d
-    local g = f >= 100 and 0 or f >= 10 and 1 or 2
-    local h = string.format("%." .. g .. "f", f)
-    if h:find("%.") then h = h:gsub("0+$", ""):gsub("%.$", "") end
-    return h .. c
+    if e9 < 1000 then
+        return string.format("%g", e9)
+    end
+    local e11, e12
+    for e8, e in ipairs(e51) do
+        if e9 >= e[2] then
+            e11, e12 = e[1], e[2]
+        end
+    end
+    local e13 = e9 / e12
+    local e14 = e13 >= 100 and 0 or e13 >= 10 and 1 or 2
+    local e15 = string.format("%." .. e14 .. "f", e13)
+    if e15:find("%.") then
+        e15 = e15:gsub("0+$", ""):gsub("%.$", "")
+    end
+    return e15 .. e11
 end
 
-local e27 = {}
-for a, b in pairs(e23) do
-    e27[a] = {}
-    for c, d in pairs(b) do
-        e27[a][c] = e26(d.req)
+local e54 = {}
+for e7, e9 in pairs(e49) do
+    e54[e7] = {}
+    for e11, e12 in pairs(e9) do
+        e54[e7][e11] = e52(e12.req)
     end
 end
 
-
-local e28 = {
-    FistStrength  = er(e14, "FSTxt"),
-    BodyToughness = er(e14, "BTTxt"),
-    MovementSpeed = er(e14, "MSTxt"),
-    JumpForce     = er(e14, "JFTxt"),
-    PsychicPower  = er(e14, "PPTxt")
+local e55 = {
+    FistStrength = e21(e25, "FSTxt"),
+    BodyToughness = e21(e25, "BTTxt"),
+    MovementSpeed = e21(e25, "MSTxt"),
+    JumpForce = e21(e25, "JFTxt"),
+    PsychicPower = e21(e25, "PPTxt"),
 }
 
-if not egd() then return end
+if not e20() then
+    return
+end
 
-local egr = {}
-local egs = {
+local e56 = {}
+local e57 = {
     FS_Gained_Handler = "FistStrength",
     BT_Gained_Handler = "BodyToughness",
     MS_Gained_Handler = "MovementSpeed",
     JF_Gained_Handler = "JumpForce",
-    PP_Gained_Handler = "PsychicPower"
+    PP_Gained_Handler = "PsychicPower",
 }
 
-for _, a in ipairs({ "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" }) do
-    egr[a] = { b = {}, r = 0 }
+for e8, e7 in ipairs({ "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" }) do
+    e56[e7] = { b = {}, r = 0 }
 end
 
-local function egt(a, b)
-    local c = egr[a]
-    if not c then return end
-    local d = tick()
-    while #c.b > 0 and d - c.b[1][1] > 10 do
-        table.remove(c.b, 1)
+local function e58(e7, e9)
+    local e11 = e56[e7]
+    if not e11 then
+        return
     end
-    c.b[#c.b + 1] = { d, b }
+    local e12 = tick()
+    while #e11.b > 0 and e12 - e11.b[1][1] > 10 do
+        table.remove(e11.b, 1)
+    end
+    e11.b[#e11.b + 1] = { e12, e9 }
     local e = 0
-    for _, f in ipairs(c.b) do
-        e = e + f[2]
+    for e8, e13 in ipairs(e11.b) do
+        e = e + e13[2]
     end
-    local g = d - c.b[1][1]
-    c.r = e / (g < 1 and 1 or g)
+    local e14 = e12 - e11.b[1][1]
+    e11.r = e / (e14 < 1 and 1 or e14)
 end
 
-local function egv(a)
-    local b = egr[a]
-    if b and b.r > 0 then
-        return " (+" .. eab(b.r) .. "/s)"
+local function e59(e7)
+    local e9 = e56[e7]
+    if e9 and e9.r > 0 then
+        return " (+" .. e53(e9.r) .. "/s)"
     end
     return ""
 end
 
-e18(e13.OnClientEvent, function(a)
-    if type(a) ~= "table" or type(a[1]) ~= "string" then return end
-    local b = egs[a[1]]
-    if b and type(a[3]) == "number" and a[3] > 0 then
-        egt(b, a[3])
+e44(e24.OnClientEvent, function(e7)
+    if type(e7) ~= "table" or type(e7[1]) ~= "string" then
+        return
+    end
+    local e9 = e57[e7[1]]
+    if e9 and type(e7[3]) == "number" and e7[3] > 0 then
+        e58(e9, e7[3])
     end
 end)
 
-local function e29(a)
-    local b = e28[a]
-    if not b then return 0 end
-    return e26(b.Text)
+local function e60(e7)
+    local e9 = e55[e7]
+    if not e9 then
+        return 0
+    end
+    return e52(e9.Text)
 end
 
-local function e30(a, b)
-    local c = e27[a]
-    if not c then return nil end
-    local d, e = nil, -1
-    for f, g in pairs(c) do
-        if b >= g and g > e then
-            d = f
-            e = g
+local function e61(e7, e9)
+    local e11 = e54[e7]
+    if not e11 then
+        return nil
+    end
+    local e12, e = nil, -1
+    for e13, e14 in pairs(e11) do
+        if e9 >= e14 and e14 > e then
+            e12 = e13
+            e = e14
         end
     end
-    return d
+    return e12
 end
 
-local function e31(a, b)
-    local c = e27[a]
-    if not c then return nil end
-    local d, e, f, g = nil, -1, nil, -1
-    for h, i in pairs(c) do
-        if b >= i and i > e then
-            f = d
-            g = e
-            d = h
-            e = i
-        elseif b >= i and i > g and i < e then
-            f = h
-            g = i
+local function e62(e7, e9)
+    local e11 = e54[e7]
+    if not e11 then
+        return nil
+    end
+    local e12, e, e13, e14 = nil, -1, nil, -1
+    for e15, e16 in pairs(e11) do
+        if e9 >= e16 and e16 > e then
+            e13 = e12
+            e14 = e
+            e12 = e15
+            e = e16
+        elseif e9 >= e16 and e16 > e14 and e16 < e then
+            e13 = e15
+            e14 = e16
         end
     end
-    return f
+    return e13
 end
 
-local function e32(a, b)
-    local c = e15:FindFirstChild(a)
-    if not c then return nil end
-    return c:FindFirstChild(b)
+local function e63(e7, e9)
+    local e11 = e26:FindFirstChild(e7)
+    if not e11 then
+        return nil
+    end
+    return e11:FindFirstChild(e9)
 end
 
-local function e33(a)
-    if not a then return false end
-    local b = e4.Character
-    if not b then return false end
-    local c = b:FindFirstChild("HumanoidRootPart")
-    if not c then return false end
-    local d
-    if a:IsA("BasePart") then
-        d = a.CFrame
+local function e64(e7)
+    if not e7 then
+        return false
+    end
+    local e9 = e4.Character
+    if not e9 then
+        return false
+    end
+    local e11 = e9:FindFirstChild("HumanoidRootPart")
+    if not e11 then
+        return false
+    end
+    local e12
+    if e7:IsA("BasePart") then
+        e12 = e7.CFrame
     else
-        local e = a.PrimaryPart or a:FindFirstChildWhichIsA("BasePart")
-        if e then d = e.CFrame end
-    end
-    if not d then return false end
-    local f = d + Vector3.new(0, 5, 0)
-    local g, h
-    if a:IsA("BasePart") then
-        g, h = a.CFrame, a.Size
-    elseif a:IsA("Model") then
-        local i, j, k = pcall(a.GetBoundingBox, a)
-        if i and j and k then
-            g, h = j, k
+        local e = e7.PrimaryPart or e7:FindFirstChildWhichIsA("BasePart")
+        if e then
+            e12 = e.CFrame
         end
     end
-    if g and h then
-        local l = g:PointToObjectSpace(c.Position)
-        local m = h.Y <= 8 and 4 or h.Y / 2
-        if math.abs(l.X) <= h.X / 2 and math.abs(l.Z) <= h.Z / 2 and l.Y >= -h.Y / 2 and l.Y <= m then
-            local n = Vector3.new(c.Position.X, math.min(c.Position.Y, f.Position.Y), c.Position.Z)
-            return true, CFrame.new(n) * (f - f.Position)
+    if not e12 then
+        return false
+    end
+    local e13 = e12 + Vector3.new(0, 5, 0)
+    local e14, e15
+    if e7:IsA("BasePart") then
+        e14, e15 = e7.CFrame, e7.Size
+    elseif e7:IsA("Model") then
+        local e16, e17, e18 = pcall(e7.GetBoundingBox, e7)
+        if e16 and e17 and e18 then
+            e14, e15 = e17, e18
         end
     end
-    c.CFrame = f
-    return true, f
+    if e14 and e15 then
+        local e65 = e14:PointToObjectSpace(e11.Position)
+        local e66 = e15.Y <= 8 and 4 or e15.Y / 2
+        if
+            math.abs(e65.X) <= e15.X / 2
+            and math.abs(e65.Z) <= e15.Z / 2
+            and e65.Y >= -e15.Y / 2
+            and e65.Y <= e66
+        then
+            local e67 = Vector3.new(e11.Position.X, math.min(e11.Position.Y, e13.Position.Y), e11.Position.Z)
+            return true, CFrame.new(e67) * (e13 - e13.Position)
+        end
+    end
+    e11.CFrame = e13
+    return true, e13
 end
 
-local function e34(a)
-    local b = e29("MovementSpeed")
-    local c = e29("JumpForce")
-    local d, e = nil, 1
-    for f, g in ipairs(e24) do
-        if b >= g.m and c >= g.j then
-            d = g
-            e = f
-        else
-            break
+local function e68(e7)
+    local e9 = e60("MovementSpeed")
+    local e11 = e60("JumpForce")
+    local e12, e = nil, 1
+    for e13, e14 in ipairs(e50) do
+        if e9 >= e14.m and e11 >= e14.j then
+            e12 = e14
+            e = e13
         end
     end
-    if d and (a or e ~= e7.we) then
-        e7.we = e
-        efr({ "EquipWeight_Request", e })
+    if e12 and (e7 or e ~= e19.we) then
+        e19.we = e
+        e27({ "EquipWeight_Request", e })
     end
 end
 
-
-local function epm(a)
-    if a then
-        e17("PP", function()
+local function e69(e7)
+    if e7 then
+        e43("PP", function()
             task.wait(0.4)
-            local b
-            while e10.stat == "PsychicPower" and egd() do
-                local c = e4.Character
-                local d = c and c:FindFirstChildOfClass("Humanoid")
-                local f = c and c:FindFirstChild("Meditate")
-                local g = e4:FindFirstChild("Backpack")
-                local h = g and g:FindFirstChild("Meditate")
-                local i = e30("PsychicPower", e29("PsychicPower"))
-                local j = i ~= nil and string.find(i, "AFK_PP", 1, true) ~= nil
-                if j then
-                    if b ~= 3 then
-                        b = 3
-                        e22("Psychic Power \xe2\x80\x94 AFK Zone (no Meditate needed)", e3(170, 120, 255))
+            local e9
+            while e33.stat == "PsychicPower" and e20() do
+                local e11 = e4.Character
+                local e12 = e11 and e11:FindFirstChildOfClass("Humanoid")
+                local e13 = e11 and e11:FindFirstChild("Meditate")
+                local e14 = e4:FindFirstChild("Backpack")
+                local e15 = e14 and e14:FindFirstChild("Meditate")
+                local e16 = e61("PsychicPower", e60("PsychicPower"))
+                local e17 = e16 ~= nil and string.find(e16, "AFK_PP", 1, true) ~= nil
+                if e17 then
+                    if e9 ~= 3 then
+                        e9 = 3
+                        e48("Psychic Power \xe2\x80\x94 AFK Zone (no Meditate needed)", e3(170, 120, 255))
                     end
-                    if f and g then pcall(function() f.Parent = g end) end
-                    task.wait(0.5)
-                elseif f then
-                    if b ~= 0 then
-                        b = 0
-                        e22("Psychic Power \xe2\x80\x94 Meditating", e3(170, 120, 255))
+                    if e13 and e14 then
+                        pcall(function()
+                            e13.Parent = e14
+                        end)
                     end
                     task.wait(0.5)
-                elseif h and d and d.Health > 0 then
-                    if b ~= 1 then
-                        b = 1
-                        e22("Psychic Power \xe2\x80\x94 Re-equipping Meditate", e3(170, 120, 255))
+                elseif e13 then
+                    if e9 ~= 0 then
+                        e9 = 0
+                        e48("Psychic Power \xe2\x80\x94 Meditating", e3(170, 120, 255))
                     end
-                    pcall(d.EquipTool, d, h)
+                    task.wait(0.5)
+                elseif e15 and e12 and e12.Health > 0 then
+                    if e9 ~= 1 then
+                        e9 = 1
+                        e48("Psychic Power \xe2\x80\x94 Re-equipping Meditate", e3(170, 120, 255))
+                    end
+                    pcall(e12.EquipTool, e12, e15)
                     task.wait(0.3)
-                elseif not h then
-                    if b ~= 2 then
-                        b = 2
-                        e22("Psychic Power \xe2\x80\x94 Meditate tool not found", e3(255, 150, 80))
+                elseif not e15 then
+                    if e9 ~= 2 then
+                        e9 = 2
+                        e48("Psychic Power \xe2\x80\x94 Meditate tool not found", e3(255, 150, 80))
                     end
                     task.wait(0.4)
                 else
@@ -625,965 +742,1226 @@ local function epm(a)
             end
         end)
     else
-        e16("PP")
-        local b = e4.Character
-        if b and b:FindFirstChild("Meditate") then
-            local c = b:FindFirstChildOfClass("Humanoid")
-            if c then c:UnequipTools() end
+        e42("PP")
+        local e9 = e4.Character
+        if e9 and e9:FindFirstChild("Meditate") then
+            local e11 = e9:FindFirstChildOfClass("Humanoid")
+            if e11 then
+                e11:UnequipTools()
+            end
         end
     end
 end
 
-
-local function elr(a)
-    local b = "eSPTS_Obsidian/cached_" .. a:match("([^/]+)$")
-    local c, d = pcall(function()
-        return game:HttpGet(a)
+local function e70(e7)
+    local e9 = "eSPTS_Obsidian/cached_" .. e7:match("([^/]+)$")
+    local e11, e12 = pcall(function()
+        return game:HttpGet(e7)
     end)
-    if c and typeof(d) == "string" and #d > 200 then
-        edr()
-        if writefile then pcall(writefile, b, d) end
-        return d
+    if e11 and typeof(e12) == "string" and #e12 > 200 then
+        e36()
+        if writefile then
+            pcall(writefile, e9, e12)
+        end
+        return e12
     end
-    if readfile and isfile and isfile(b) then
-        local f, g = pcall(readfile, b)
-        if f and typeof(g) == "string" and #g > 200 then
-            warn("[eSPTS] download failed - using cached copy for " .. a)
-            return g
+    if readfile and isfile and isfile(e9) then
+        local e13, e14 = pcall(readfile, e9)
+        if e13 and typeof(e14) == "string" and #e14 > 200 then
+            warn("[eSPTS] download failed - using cached copy for " .. e7)
+            return e14
         end
     end
-    warn("[eSPTS] could not download " .. a .. " - " .. tostring(d))
-    error("[eSPTS] required library unavailable - download failed and no cached copy - check internet or executor http access", 0)
+    warn("[eSPTS] could not download " .. e7 .. " - " .. tostring(e12))
+    error(
+        "[eSPTS] required library unavailable - download failed and no cached copy - check internet or executor http access",
+        0
+    )
 end
 
-local e35 = (function()
-    local a, b = pcall(function()
-        return loadstring(elr("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua"))()
+local e71 = (function()
+    local e7, e9 = pcall(function()
+        return loadstring(e70("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua"))()
     end)
-    if not a or typeof(b) ~= "table" then
-        error("[eSPTS] Obsidian library failed to load - " .. tostring(b), 0)
+    if not e7 or typeof(e9) ~= "table" then
+        error("[eSPTS] Obsidian library failed to load - " .. tostring(e9), 0)
     end
-    return b
+    return e9
 end)()
 
-if not egd() then
+if not e20() then
     pcall(function()
-        if e35.ScreenGui then e35.ScreenGui:Destroy() end
+        if e71.ScreenGui then
+            e71.ScreenGui:Destroy()
+        end
     end)
     return
 end
 
-local e36 = e35.Options
-local e37 = e35.Toggles
+local e72 = e71.Options
+local e73 = e71.Toggles
 
-e7.gui = e35.ScreenGui
+e19.gui = e71.ScreenGui
 pcall(function()
-    e7.gui.Name = "eSPTS"
+    e19.gui.Name = "eSPTS"
 end)
 
-e7.unload = function()
+e19.unload = function()
     pcall(function()
-        e35:Unload()
+        e71:Unload()
     end)
     pcall(function()
-        if e7.gui and e7.gui.Parent then e7.gui:Destroy() end
+        if e19.gui and e19.gui.Parent then
+            e19.gui:Destroy()
+        end
     end)
 end
 
-esw(e7.gui)
+e10(e19.gui)
 
-
-local e38 = e35:CreateWindow({
+local e74 = e71:CreateWindow({
     Title = "eSPTS",
     Footer = "SPTS: Endless",
     Icon = "zap",
     Center = true,
-    AutoShow = not e10.hide,
+    AutoShow = not e33.hide,
     ShowCustomCursor = false,
     NotifySide = "Right",
-    ToggleKeybind = Enum.KeyCode[e10.key]
+    ToggleKeybind = Enum.KeyCode[e33.key],
 })
 
-if e10.hide then
-    e22("Interface started hidden - press " .. e10.key .. " to show it")
+if e33.hide then
+    e48("Interface started hidden - press " .. e33.key .. " to show it")
     task.delay(0.5, function()
-        if not egd() or e35.Unloaded then return end
-        e35:Notify({ Title = "eSPTS", Description = "Loaded hidden - press " .. e10.key .. " to show the interface", Time = 6 })
+        if not e20() or e71.Unloaded then
+            return
+        end
+        e71:Notify({
+            Title = "eSPTS",
+            Description = "Loaded hidden - press " .. e33.key .. " to show the interface",
+            Time = 6,
+        })
     end)
 end
 
-local e39 = {
-    ["Auto Farm"]        = e38:AddTab("Auto Farm", "flame"),
-    ["Auto Weights"]     = e38:AddTab("Auto Weights", "dumbbell"),
-    ["Auto Respawn"]     = e38:AddTab("Auto Respawn", "skull"),
-    ["Position Manager"] = e38:AddTab("Position Manager", "crosshair"),
-    ["Settings"]         = e38:AddTab("Settings", "settings")
+local e75 = {
+    ["Auto Farm"] = e74:AddTab("Auto Farm", "flame"),
+    ["Auto Weights"] = e74:AddTab("Auto Weights", "dumbbell"),
+    ["Auto Respawn"] = e74:AddTab("Auto Respawn", "skull"),
+    ["Position Manager"] = e74:AddTab("Position Manager", "crosshair"),
+    ["Settings"] = e74:AddTab("Settings", "settings"),
 }
 
-for a, b in pairs(e39) do
-    local c = b.Show
-    b.Show = function(d, ...)
-        e10.tab = a
-        esq()
-        return c(d, ...)
+for e7, e9 in pairs(e75) do
+    local e11 = e9.Show
+    e9.Show = function(e12, ...)
+        e33.tab = e7
+        e38()
+        return e11(e12, ...)
     end
 end
-local e40 = false
-local function e41(a)
-    e40 = true
-    local b, c = pcall(a)
-    e40 = false
-    return b, c
+local e76 = false
+local function e77(e7)
+    e76 = true
+    local e9, e11 = pcall(e7)
+    e76 = false
+    return e9, e11
 end
 
-local e42 = { area = nil, anchor = nil, thr = 0, rtr = 0, base = nil, status = nil, names = nil, rows = nil }
-
+local e78 = { area = nil, anchor = nil, thr = 0, rtr = 0, base = nil, status = nil, names = nil, rows = nil }
 
 do
-    local a = e39["Auto Farm"]:AddLeftGroupbox("Stat Training", "flame")
-    local b = a:AddLabel("No active training", true)
-    e42.status = b
-    a:AddDivider()
-    a:AddLabel("Select a stat to automatically train at the best available area", true)
-    local c = {
-        FistStrength  = "Fist Strength",
+    local e7 = e75["Auto Farm"]:AddLeftGroupbox("Stat Training", "flame")
+    local e9 = e7:AddLabel("No active training", true)
+    e78.status = e9
+    e7:AddDivider()
+    e7:AddLabel("Select a stat to automatically train at the best available area", true)
+    local e11 = {
+        FistStrength = "Fist Strength",
         BodyToughness = "Body Toughness",
         MovementSpeed = "Movement Speed",
-        JumpForce     = "Jump Force",
-        PsychicPower  = "Psychic Power"
+        JumpForce = "Jump Force",
+        PsychicPower = "Psychic Power",
     }
-    local d = { "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" }
-    e42.names = c
-    e42.rows = {}
-    for f, g in ipairs(d) do
-        e42.rows[g] = "Stat_" .. g
-        a:AddToggle("Stat_" .. g, {
-            Text = c[g],
+    local e12 = { "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" }
+    e78.names = e11
+    e78.rows = {}
+    for e13, e14 in ipairs(e12) do
+        e78.rows[e14] = "Stat_" .. e14
+        e7:AddToggle("Stat_" .. e14, {
+            Text = e11[e14],
             Default = false,
-            Callback = function(h)
-                if e40 then return end
-                if h then
-                    e41(function()
-                        for i, j in pairs(e42.rows) do
-                            if i ~= g then
-                                if e37[j].Value then e37[j]:SetValue(false) end
-                                if i == "PsychicPower" then epm(false) end
+            Callback = function(e15)
+                if e76 then
+                    return
+                end
+                if e15 then
+                    e77(function()
+                        for e16, e17 in pairs(e78.rows) do
+                            if e16 ~= e14 then
+                                if e73[e17].Value then
+                                    e73[e17]:SetValue(false)
+                                end
+                                if e16 == "PsychicPower" then
+                                    e69(false)
+                                end
                             end
                         end
-                        if g ~= "BodyToughness" then
-                            if e37.BTCurrent.Value then e37.BTCurrent:SetValue(false) end
-                            if e37.BTNext.Value then e37.BTNext:SetValue(false) end
+                        if e14 ~= "BodyToughness" then
+                            if e73.BTCurrent.Value then
+                                e73.BTCurrent:SetValue(false)
+                            end
+                            if e73.BTNext.Value then
+                                e73.BTNext:SetValue(false)
+                            end
                         end
                     end)
-                    e10.stat = g
-                    if g ~= "BodyToughness" then e10.mode = nil end
-                    if g == "PsychicPower" then epm(true) end
-                    local i = e29(g)
-                    local j = e30(g, i)
-                    if not j then
-                        e42.status:SetText(c[g] .. " \xe2\x80\x94 No available area")
-                        e42.area = nil
-                        e10.mode = nil
-                        esq()
-                        e22(c[g] .. " \xe2\x80\x94 No area found")
+                    e33.stat = e14
+                    e78.area = nil
+                    e78.anchor = nil
+                    e78.base = nil
+                    if e14 ~= "BodyToughness" then
+                        e33.mode = nil
+                    end
+                    if e14 == "PsychicPower" then
+                        e69(true)
+                    end
+                    local e16 = e60(e14)
+                    local e17 = e61(e14, e16)
+                    if not e17 then
+                        e78.status:SetText(e11[e14] .. " \xe2\x80\x94 No available area")
+                        e78.area = nil
+                        e33.mode = nil
+                        e38()
+                        e48(e11[e14] .. " \xe2\x80\x94 No area found")
                         return
                     end
-                    local k = e32(g, j)
-                    e42.area = k
-                    if not k then
-                        e42.status:SetText("Area '" .. j .. "' not found!")
-                        e10.mode = nil
-                        esq()
-                        e22("Area '" .. j .. "' not found")
+                    local e18 = e63(e14, e17)
+                    e78.area = e18
+                    if not e18 then
+                        e78.status:SetText("Area '" .. e17 .. "' not found!")
+                        e33.mode = nil
+                        e38()
+                        e48("Area '" .. e17 .. "' not found")
                         return
                     end
-                    local l, m = e33(k)
-                    if l then
-                        e42.anchor = m
-                        e42.status:SetText(c[g] .. " \xe2\x80\x94 Area: " .. j .. " (req " .. e23[g][j].req .. " --> " .. eab(e23[g][j].req) .. ")" .. egv(g))
-                        e42.base = e42.status.Text
-                        e22(c[g] .. " \xe2\x80\x94 " .. j)
+                    local e65, e66 = e64(e18)
+                    if e65 then
+                        e78.anchor = e66
+                        e78.status:SetText(
+                            e11[e14]
+                                .. " \xe2\x80\x94 Area: "
+                                .. e17
+                                .. " (req "
+                                .. e49[e14][e17].req
+                                .. " --> "
+                                .. e53(e49[e14][e17].req)
+                                .. ")"
+                                .. e59(e14)
+                        )
+                        e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
+                        e48(e11[e14] .. " \xe2\x80\x94 " .. e17)
                     else
-                        e42.status:SetText("Teleport failed!")
-                        e22("Teleport failed")
+                        e78.status:SetText("Teleport failed!")
+                        e48("Teleport failed")
                     end
                 else
-                    e10.stat = nil
-                    e42.area = nil
-                    e42.anchor = nil
-                    e10.mode = nil
-                    if g == "PsychicPower" then epm(false) end
-                    e41(function()
-                        if e37.BTCurrent.Value then e37.BTCurrent:SetValue(false) end
-                        if e37.BTNext.Value then e37.BTNext:SetValue(false) end
+                    e33.stat = nil
+                    e78.area = nil
+                    e78.anchor = nil
+                    e33.mode = nil
+                    if e14 == "PsychicPower" then
+                        e69(false)
+                    end
+                    e77(function()
+                        if e73.BTCurrent.Value then
+                            e73.BTCurrent:SetValue(false)
+                        end
+                        if e73.BTNext.Value then
+                            e73.BTNext:SetValue(false)
+                        end
                     end)
-                    e42.status:SetText("No active training")
-                    e22(c[g] .. " \xe2\x80\x94 Stopped")
+                    e78.status:SetText("No active training")
+                    e48(e11[e14] .. " \xe2\x80\x94 Stopped")
                 end
-                esq()
-            end
+                e38()
+            end,
         })
     end
 end
 
 do
-    local a = e39["Auto Farm"]:AddRightGroupbox("Body Toughness Mode", "shield")
-    a:AddLabel("Train in your current area or jump ahead to the next unlocked one", true)
-    a:AddDivider()
-    a:AddToggle("BTCurrent", {
+    local e7 = e75["Auto Farm"]:AddRightGroupbox("Body Toughness Mode", "shield")
+    e7:AddLabel("Train in your current area or jump ahead to the next unlocked one", true)
+    e7:AddDivider()
+    e7:AddToggle("BTCurrent", {
         Text = "BT: Current Area",
         Default = false,
-        Callback = function(b)
-            if e40 then return end
-            if b then
-                e41(function()
-                    for c, d in pairs(e42.rows) do
-                        if c ~= "BodyToughness" and e37[d].Value then e37[d]:SetValue(false) end
-                        if c == "PsychicPower" then epm(false) end
+        Callback = function(e9)
+            if e76 then
+                return
+            end
+            if e9 then
+                e77(function()
+                    for e11, e12 in pairs(e78.rows) do
+                        if e11 ~= "BodyToughness" and e73[e12].Value then
+                            e73[e12]:SetValue(false)
+                        end
+                        if e11 == "PsychicPower" then
+                            e69(false)
+                        end
                     end
-                    if not e37.Stat_BodyToughness.Value then e37.Stat_BodyToughness:SetValue(true) end
-                    if e37.BTNext.Value then e37.BTNext:SetValue(false) end
+                    if not e73.Stat_BodyToughness.Value then
+                        e73.Stat_BodyToughness:SetValue(true)
+                    end
+                    if e73.BTNext.Value then
+                        e73.BTNext:SetValue(false)
+                    end
                 end)
-                e10.mode = "c"
-                e10.stat = "BodyToughness"
-                local c = e29("BodyToughness")
-                local d = e31("BodyToughness", c)
-                if not d then
-                    e42.status:SetText("Body Toughness \xe2\x80\x94 No available area")
-                    e42.area = nil
-                    e10.mode = nil
-                    esq()
-                    e22("BT Current \xe2\x80\x94 No area")
+                e33.mode = "c"
+                e33.stat = "BodyToughness"
+                e78.anchor = nil
+                e78.base = nil
+                local e11 = e60("BodyToughness")
+                local e12 = e62("BodyToughness", e11)
+                if not e12 then
+                    e78.status:SetText("Body Toughness \xe2\x80\x94 No available area")
+                    e78.area = nil
+                    e33.mode = nil
+                    e38()
+                    e48("BT Current \xe2\x80\x94 No area")
                     return
                 end
-                local f = e32("BodyToughness", d)
-                e42.area = f
-                if not f then
-                    e42.status:SetText("Area '" .. d .. "' not found!")
-                    e10.mode = nil
-                    esq()
-                    e22("Area not found")
+                local e13 = e63("BodyToughness", e12)
+                e78.area = e13
+                if not e13 then
+                    e78.status:SetText("Area '" .. e12 .. "' not found!")
+                    e33.mode = nil
+                    e38()
+                    e48("Area not found")
                     return
                 end
-                local g, h = e33(f)
-                if g then
-                    e42.anchor = h
-                    e42.status:SetText("Body Toughness (Current) \xe2\x80\x94 Area: " .. d .. " (req " .. e23.BodyToughness[d].req .. " --> " .. eab(e23.BodyToughness[d].req) .. ")" .. egv("BodyToughness"))
-                    e42.base = e42.status.Text
-                    e22("BT Current \xe2\x80\x94 " .. d)
+                local e14, e15 = e64(e13)
+                if e14 then
+                    e78.anchor = e15
+                    e78.status:SetText(
+                        "Body Toughness (Current) \xe2\x80\x94 Area: "
+                            .. e12
+                            .. " (req "
+                            .. e49.BodyToughness[e12].req
+                            .. " --> "
+                            .. e53(e49.BodyToughness[e12].req)
+                            .. ")"
+                            .. e59("BodyToughness")
+                    )
+                    e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
+                    e48("BT Current \xe2\x80\x94 " .. e12)
                 else
-                    e42.status:SetText("Teleport failed!")
-                    e22("Teleport failed")
+                    e78.status:SetText("Teleport failed!")
+                    e48("Teleport failed")
                 end
             else
-                e10.mode = nil
-                e10.stat = nil
-                e42.area = nil
-                e42.anchor = nil
-                e41(function()
-                    for c, d in pairs(e42.rows) do
-                        if e37[d].Value then e37[d]:SetValue(false) end
+                e33.mode = nil
+                e33.stat = nil
+                e78.area = nil
+                e78.anchor = nil
+                e77(function()
+                    for e11, e12 in pairs(e78.rows) do
+                        if e73[e12].Value then
+                            e73[e12]:SetValue(false)
+                        end
                     end
                 end)
-                e42.status:SetText("No active training")
-                e22("BT mode off")
+                e78.status:SetText("No active training")
+                e48("BT mode off")
             end
-            esq()
-        end
+            e38()
+        end,
     })
-    a:AddToggle("BTNext", {
+    e7:AddToggle("BTNext", {
         Text = "BT: Next Area",
         Default = false,
-        Callback = function(b)
-            if e40 then return end
-            if b then
-                e41(function()
-                    for c, d in pairs(e42.rows) do
-                        if c ~= "BodyToughness" and e37[d].Value then e37[d]:SetValue(false) end
-                        if c == "PsychicPower" then epm(false) end
+        Callback = function(e9)
+            if e76 then
+                return
+            end
+            if e9 then
+                e77(function()
+                    for e11, e12 in pairs(e78.rows) do
+                        if e11 ~= "BodyToughness" and e73[e12].Value then
+                            e73[e12]:SetValue(false)
+                        end
+                        if e11 == "PsychicPower" then
+                            e69(false)
+                        end
                     end
-                    if not e37.Stat_BodyToughness.Value then e37.Stat_BodyToughness:SetValue(true) end
-                    if e37.BTCurrent.Value then e37.BTCurrent:SetValue(false) end
+                    if not e73.Stat_BodyToughness.Value then
+                        e73.Stat_BodyToughness:SetValue(true)
+                    end
+                    if e73.BTCurrent.Value then
+                        e73.BTCurrent:SetValue(false)
+                    end
                 end)
-                e10.mode = "n"
-                e10.stat = "BodyToughness"
-                local c = e29("BodyToughness")
-                local d = e30("BodyToughness", c)
-                if not d then
-                    e42.status:SetText("Body Toughness \xe2\x80\x94 No available area")
-                    e42.area = nil
-                    e10.mode = nil
-                    esq()
-                    e22("BT Next \xe2\x80\x94 No area")
+                e33.mode = "n"
+                e33.stat = "BodyToughness"
+                e78.anchor = nil
+                e78.base = nil
+                local e11 = e60("BodyToughness")
+                local e12 = e61("BodyToughness", e11)
+                if not e12 then
+                    e78.status:SetText("Body Toughness \xe2\x80\x94 No available area")
+                    e78.area = nil
+                    e33.mode = nil
+                    e38()
+                    e48("BT Next \xe2\x80\x94 No area")
                     return
                 end
-                local f = e32("BodyToughness", d)
-                e42.area = f
-                if not f then
-                    e42.status:SetText("Area '" .. d .. "' not found!")
-                    e10.mode = nil
-                    esq()
-                    e22("Area not found")
+                local e13 = e63("BodyToughness", e12)
+                e78.area = e13
+                if not e13 then
+                    e78.status:SetText("Area '" .. e12 .. "' not found!")
+                    e33.mode = nil
+                    e38()
+                    e48("Area not found")
                     return
                 end
-                local g, h = e33(f)
-                if g then
-                    e42.anchor = h
-                    e42.status:SetText("Body Toughness (Next) \xe2\x80\x94 Area: " .. d .. " (req " .. e23.BodyToughness[d].req .. " --> " .. eab(e23.BodyToughness[d].req) .. ")" .. egv("BodyToughness"))
-                    e42.base = e42.status.Text
-                    e22("BT Next \xe2\x80\x94 " .. d)
+                local e14, e15 = e64(e13)
+                if e14 then
+                    e78.anchor = e15
+                    e78.status:SetText(
+                        "Body Toughness (Next) \xe2\x80\x94 Area: "
+                            .. e12
+                            .. " (req "
+                            .. e49.BodyToughness[e12].req
+                            .. " --> "
+                            .. e53(e49.BodyToughness[e12].req)
+                            .. ")"
+                            .. e59("BodyToughness")
+                    )
+                    e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
+                    e48("BT Next \xe2\x80\x94 " .. e12)
                 else
-                    e42.status:SetText("Teleport failed!")
-                    e22("Teleport failed")
+                    e78.status:SetText("Teleport failed!")
+                    e48("Teleport failed")
                 end
             else
-                e10.mode = nil
-                e10.stat = nil
-                e42.area = nil
-                e42.anchor = nil
-                e41(function()
-                    for c, d in pairs(e42.rows) do
-                        if e37[d].Value then e37[d]:SetValue(false) end
+                e33.mode = nil
+                e33.stat = nil
+                e78.area = nil
+                e78.anchor = nil
+                e77(function()
+                    for e11, e12 in pairs(e78.rows) do
+                        if e73[e12].Value then
+                            e73[e12]:SetValue(false)
+                        end
                     end
                 end)
-                e42.status:SetText("No active training")
-                e22("BT mode off")
+                e78.status:SetText("No active training")
+                e48("BT mode off")
             end
-            esq()
-        end
+            e38()
+        end,
     })
 end
 
-
-local e43, e44, e45
-e43 = { s = nil }
+local e79, e80, e81
+e79 = { s = nil }
 
 do
-    local a = e39["Auto Weights"]:AddLeftGroupbox("Auto Weight", "dumbbell")
-    e43.s = a:AddLabel("Auto weight system inactive", true)
-    a:AddDivider()
-    a:AddLabel("Automatically equip the best available weight based on your stats", true)
-    a:AddToggle("AutoWeight", {
+    local e7 = e75["Auto Weights"]:AddLeftGroupbox("Auto Weight", "dumbbell")
+    e79.s = e7:AddLabel("Auto weight system inactive", true)
+    e7:AddDivider()
+    e7:AddLabel("Automatically equip the best available weight based on your stats", true)
+    e7:AddToggle("AutoWeight", {
         Text = "Auto Weight",
-        Default = e10.weight,
-        Callback = function(b)
-            if e40 then return end
-            e10.weight = b
-            e45()
-            esq()
-        end
+        Default = e33.weight,
+        Callback = function(e9)
+            if e76 then
+                return
+            end
+            e33.weight = e9
+            e81()
+            e38()
+        end,
     })
 end
 
-e44 = function()
-    e16("W")
-    if not e10.weight then return end
-    e7.th.W = task.spawn(function()
-        local a = 0
-        while e10.weight and egd() do
+e80 = function()
+    e42("W")
+    if not e33.weight then
+        return
+    end
+    e19.th.W = task.spawn(function()
+        local e7 = 0
+        while e33.weight and e20() do
             task.wait(0.1)
-            if e10.weight and not e35.Unloaded then
-                efr(eM)
-                efr(eJ)
-                a = a + 1
-                e34(a >= 30)
-                if a >= 30 then a = 0 end
+            if e33.weight and not e71.Unloaded then
+                e27(e29)
+                e27(e30)
+                e7 = e7 + 1
+                e68(e7 >= 30)
+                if e7 >= 30 then
+                    e7 = 0
+                end
             end
         end
-        e7.th.W = nil
+        e19.th.W = nil
     end)
 end
 
-e45 = function(a)
-    e16("W")
-    if not e10.weight then
-        e43.s:SetText("Auto weight system inactive")
-        if not a then e22("Auto Weight disabled") end
+e81 = function(e7)
+    e42("W")
+    if not e33.weight then
+        e79.s:SetText("Auto weight system inactive")
+        if not e7 then
+            e48("Auto Weight disabled")
+        end
         return
     end
-    e43.s:SetText("Auto Weight active \xe2\x80\x94 farming MS and JF automatically")
-    e34(true)
-    e44()
-    if not a then e22("Auto Weight enabled") end
+    e79.s:SetText("Auto Weight active \xe2\x80\x94 farming MS and JF automatically")
+    e68(true)
+    e80()
+    if not e7 then
+        e48("Auto Weight enabled")
+    end
 end
 
-
-local function erm()
-    e16("R")
-    if not e10.rsp then return end
-    local function a()
-        local b = game:GetService("Lighting"):FindFirstChild("Blur")
-        if b then
-            b.Size = 0
-            b.Enabled = false
-        end
-        local c = e5:FindFirstChild("IntroGui")
-        if c and c:IsA("ScreenGui") then c.Enabled = false end
-        if e6 then e6.Enabled = true end
+local function e82()
+    e42("R")
+    if not e33.rsp then
+        return
     end
-    e7.th.R = task.spawn(function()
-        while e10.rsp and egd() and not e35.Unloaded do
-            local c = e10.rtype
-            local d = e5:FindFirstChild("IntroGui")
-            local f = d and d:IsA("ScreenGui") and d.Enabled
-            local g = e4.Character
-            local h = g and g:FindFirstChildOfClass("Humanoid")
-            local i = not g or not h or h.Health <= 0 or h:GetState() == Enum.HumanoidStateType.Dead
-            local j = game:GetService("Lighting"):FindFirstChild("Blur")
-            if c == "Risky" then
-                if f then d.Enabled = false end
-                if j and (j.Enabled or j.Size > 0) then
-                    j.Enabled = false
-                    j.Size = 0
+    local function e7()
+        local e9 = game:GetService("Lighting"):FindFirstChild("Blur")
+        if e9 then
+            e9.Size = 0
+            e9.Enabled = false
+        end
+        local e11 = e22:FindFirstChild("IntroGui")
+        if e11 and e11:IsA("ScreenGui") then
+            e11.Enabled = false
+        end
+        if e23 then
+            e23.Enabled = true
+        end
+    end
+    e19.th.R = task.spawn(function()
+        while e33.rsp and e20() and not e71.Unloaded do
+            local e11 = e33.rtype
+            local e12 = e22:FindFirstChild("IntroGui")
+            local e13 = e12 and e12:IsA("ScreenGui") and e12.Enabled
+            local e14 = e4.Character
+            local e15 = e14 and e14:FindFirstChildOfClass("Humanoid")
+            local e16 = not e14 or not e15 or e15.Health <= 0 or e15:GetState() == Enum.HumanoidStateType.Dead
+            local e17 = game:GetService("Lighting"):FindFirstChild("Blur")
+            if e11 == "Risky" then
+                if e13 then
+                    e12.Enabled = false
                 end
-                if (g and h and (h.Health <= 0 or h:GetState() == Enum.HumanoidStateType.Dead)) or (f and not g) then
+                if e17 and (e17.Enabled or e17.Size > 0) then
+                    e17.Enabled = false
+                    e17.Size = 0
+                end
+                if
+                    (e14 and e15 and (e15.Health <= 0 or e15:GetState() == Enum.HumanoidStateType.Dead))
+                    or (e13 and not e14)
+                then
                     pcall(function()
-                        local k = game:GetService("SoundService"):FindFirstChild("LocalSoundStorage")
-                        local l = k and k:FindFirstChild("DeathSound")
-                        if l then l:Stop() end
+                        local e18 = game:GetService("SoundService"):FindFirstChild("LocalSoundStorage")
+                        local e65 = e18 and e18:FindFirstChild("DeathSound")
+                        if e65 then
+                            e65:Stop()
+                        end
                     end)
-                    efr({ "Respawn" })
-                    local k = 0
-                    while k < 5 and e10.rsp and e10.rtype == "Risky" do
-                        k = k + 1
+                    e27({ "Respawn" })
+                    local e18 = 0
+                    while e18 < 5 and e33.rsp and e33.rtype == "Risky" do
+                        e18 = e18 + 1
                         task.wait(0.1)
-                        if d and d.Parent and d.Enabled then d.Enabled = false end
-                        if j then
-                            if j.Enabled then j.Enabled = false end
-                            if j.Size > 0 then j.Size = 0 end
+                        if e12 and e12.Parent and e12.Enabled then
+                            e12.Enabled = false
+                        end
+                        if e17 then
+                            if e17.Enabled then
+                                e17.Enabled = false
+                            end
+                            if e17.Size > 0 then
+                                e17.Size = 0
+                            end
                         end
                     end
                 else
-                    if not i and e6 and not e6.Enabled then
-                        local k = workspace.CurrentCamera
-                        if k then
-                            k.CameraType = Enum.CameraType.Custom
-                            k.CameraSubject = h
+                    if not e16 and e23 and not e23.Enabled then
+                        local e18 = workspace.CurrentCamera
+                        if e18 then
+                            e18.CameraType = Enum.CameraType.Custom
+                            e18.CameraSubject = e15
                         end
-                        a()
+                        e7()
                     end
                     task.wait(0.05)
                 end
             else
-                if f and i then
-                    efr({ "Respawn" })
+                if e13 and e16 then
+                    e27({ "Respawn" })
                     task.wait(0.5)
                 else
-                    if not i and (f or (j and j.Enabled) or (e6 and not e6.Enabled)) then
-                        a()
+                    if not e16 and (e13 or (e17 and e17.Enabled) or (e23 and not e23.Enabled)) then
+                        e7()
                     end
                     task.wait(0.4)
                 end
             end
         end
-        e7.th.R = nil
+        e19.th.R = nil
     end)
 end
 
-local e46 = { s = nil, d = nil, descs = { Risky = "Instant respawn on death, skips all animations", Normal = "Basic respawn when the intro screen appears" } }
-local e47 = {}
+local e83 = {
+    s = nil,
+    d = nil,
+    descs = {
+        Risky = "Instant respawn on death, skips all animations",
+        Normal = "Basic respawn when the intro screen appears",
+    },
+}
+local e84 = {}
 
 do
-    local a = e39["Auto Respawn"]:AddLeftGroupbox("Auto Respawn", "skull")
-    e46.s = a:AddLabel("Auto respawn inactive", true)
-    a:AddDivider()
-    a:AddToggle("AutoRespawn", {
+    local e7 = e75["Auto Respawn"]:AddLeftGroupbox("Auto Respawn", "skull")
+    e83.s = e7:AddLabel("Auto respawn inactive", true)
+    e7:AddDivider()
+    e7:AddToggle("AutoRespawn", {
         Text = "Enable Auto Respawn",
-        Default = e10.rsp,
-        Callback = function(b)
-            if e40 then return end
-            e10.rsp = b
-            e46.s:SetText(b and "Auto respawn armed \xe2\x80\x94 mode: " .. e10.rtype or "Auto respawn inactive")
-            e22(b and "Auto Respawn enabled" or "Auto Respawn disabled")
-            erm()
-            esq()
-        end
+        Default = e33.rsp,
+        Callback = function(e9)
+            if e76 then
+                return
+            end
+            e33.rsp = e9
+            e83.s:SetText(
+                e9 and "Auto respawn armed \xe2\x80\x94 mode: " .. e33.rtype or "Auto respawn inactive"
+            )
+            e48(e9 and "Auto Respawn enabled" or "Auto Respawn disabled")
+            e82()
+            e38()
+        end,
     })
-    a:AddLabel("Respawn Mode")
-    a:AddDropdown("RespawnMode", {
+    e7:AddLabel("Respawn Mode")
+    e7:AddDropdown("RespawnMode", {
         Values = { "Risky", "Normal" },
-        Default = e10.rtype or "Normal",
+        Default = e33.rtype or "Normal",
         Multi = false,
         Text = "Respawn Mode",
-        Callback = function(b)
-            if e40 then return end
-            e10.rtype = b
-            e46.d:SetText(e46.descs[b])
-            if e10.rsp then
-                e46.s:SetText("Auto respawn armed \xe2\x80\x94 mode: " .. b)
+        Callback = function(e9)
+            if e76 then
+                return
             end
-            erm()
-            esq()
-        end
+            e33.rtype = e9
+            e83.d:SetText(e83.descs[e9])
+            if e33.rsp then
+                e83.s:SetText("Auto respawn armed \xe2\x80\x94 mode: " .. e9)
+            end
+            e82()
+            e38()
+        end,
     })
-    e46.d = a:AddLabel(e46.descs[e10.rtype or "Normal"], true)
-    e47.apply = function()
-        e41(function()
-            e37.AutoRespawn:SetValue(e10.rsp)
-            e36.RespawnMode:SetValue(e10.rtype or "Normal")
+    e83.d = e7:AddLabel(e83.descs[e33.rtype or "Normal"], true)
+    e84.apply = function()
+        e77(function()
+            e73.AutoRespawn:SetValue(e33.rsp)
+            e72.RespawnMode:SetValue(e33.rtype or "Normal")
         end)
-        e46.d:SetText(e46.descs[e10.rtype or "Normal"])
-        e46.s:SetText(e10.rsp and "Auto respawn armed \xe2\x80\x94 mode: " .. e10.rtype or "Auto respawn inactive")
-        erm()
+        e83.d:SetText(e83.descs[e33.rtype or "Normal"])
+        e83.s:SetText(
+            e33.rsp and "Auto respawn armed \xe2\x80\x94 mode: " .. e33.rtype or "Auto respawn inactive"
+        )
+        e82()
     end
 end
 
-
-local e48 = { s = nil }
+local e85 = { s = nil }
 
 do
-    local a = e39["Position Manager"]:AddLeftGroupbox("Position Manager", "crosshair")
-    e48.s = a:AddLabel("No position saved", true)
-    a:AddDivider()
-    a:AddButton({
+    local e7 = e75["Position Manager"]:AddLeftGroupbox("Position Manager", "crosshair")
+    e85.s = e7:AddLabel("No position saved", true)
+    e7:AddDivider()
+    e7:AddButton({
         Text = "Save Current Position",
         Func = function()
             if e4.Character and e4.Character:FindFirstChild("HumanoidRootPart") then
-                e10.save = e4.Character.HumanoidRootPart.CFrame
-                e48.s:SetText("Position saved! You will respawn here and be pulled back if you go too far.")
-                e22("Position saved")
-                e35:Notify({ Title = "eSPTS", Description = "Position saved", Time = 3 })
+                e33.save = e4.Character.HumanoidRootPart.CFrame
+                e85.s:SetText("Position saved! You will respawn here and be pulled back if you go too far.")
+                e48("Position saved")
+                e71:Notify({ Title = "eSPTS", Description = "Position saved", Time = 3 })
                 task.wait(0.5)
-                esq()
+                e38()
             end
-        end
+        end,
     })
-    a:AddButton({
+    e7:AddButton({
         Text = "Clear Saved Position",
         Func = function()
-            e10.save = nil
-            e48.s:SetText("Position cleared!")
-            e22("Position cleared")
-            e35:Notify({ Title = "eSPTS", Description = "Position cleared", Time = 3 })
+            e33.save = nil
+            e85.s:SetText("Position cleared!")
+            e48("Position cleared")
+            e71:Notify({ Title = "eSPTS", Description = "Position cleared", Time = 3 })
             task.wait(0.5)
-            e48.s:SetText("No position saved")
-            esq()
-        end
+            e85.s:SetText("No position saved")
+            e38()
+        end,
     })
 end
 
-
 do
-    local c = e39["Settings"]:AddLeftGroupbox("UI Settings", "wrench")
-    c:AddToggle("KeybindMenuOpen", {
+    local e11 = e75["Settings"]:AddLeftGroupbox("UI Settings", "wrench")
+    e11:AddToggle("KeybindMenuOpen", {
         Text = "Open Keybind Menu",
-        Default = e35.KeybindFrame.Visible,
-        Callback = function(d)
-            e35.KeybindFrame.Visible = d
-            eui("kbmenu", d)
-        end
+        Default = e71.KeybindFrame.Visible,
+        Callback = function(e12)
+            e71.KeybindFrame.Visible = e12
+            e39("kbmenu", e12)
+        end,
     })
-    c:AddToggle("ShowCustomCursor", {
+    e11:AddToggle("ShowCustomCursor", {
         Text = "Custom Cursor",
-        Default = e35.ShowCustomCursor,
-        Callback = function(d)
-            e35.ShowCustomCursor = d
-            eui("cur", d)
-        end
+        Default = e71.ShowCustomCursor,
+        Callback = function(e12)
+            e71.ShowCustomCursor = e12
+            e39("cur", e12)
+        end,
     })
-    c:AddToggle("AlwaysOnTop", {
+    e11:AddToggle("AlwaysOnTop", {
         Text = "Always On Top",
-        Default = e38.AlwaysOnTop,
-        Callback = function(d)
-            e38:SetAlwaysOnTop(d)
-            eui("top", d)
-        end
+        Default = e74.AlwaysOnTop,
+        Callback = function(e12)
+            e74:SetAlwaysOnTop(e12)
+            e39("top", e12)
+        end,
     })
-    c:AddDropdown("NotificationSide", {
+    e11:AddDropdown("NotificationSide", {
         Values = { "Left", "Right" },
         Default = "Right",
         Multi = false,
         Text = "Notification Side",
-        Callback = function(d)
-            e35:SetNotifySide(d)
-            eui("nside", d)
-        end
+        Callback = function(e12)
+            e71:SetNotifySide(e12)
+            e39("nside", e12)
+        end,
     })
-    c:AddDropdown("DPIDropdown", {
+    e11:AddDropdown("DPIDropdown", {
         Values = { "50%", "75%", "100%", "125%", "150%", "175%", "200%" },
         Default = "100%",
         Multi = false,
         Text = "DPI Scale",
-        Callback = function(d)
-            e35:SetDPIScale(tonumber(d:gsub("%%", "")))
-            eui("dpi", d)
-        end
+        Callback = function(e12)
+            e71:SetDPIScale(tonumber(e12:gsub("%%", "")))
+            e39("dpi", e12)
+        end,
     })
-    c:AddSlider("UICornerSlider", {
+    e11:AddSlider("UICornerSlider", {
         Text = "Corner Radius",
-        Default = e35.CornerRadius,
+        Default = e71.CornerRadius,
         Min = 0,
         Max = 20,
         Rounding = 0,
-        Callback = function(d)
-            e38:SetCornerRadius(d)
-            eui("corner", d)
-        end
+        Callback = function(e12)
+            e74:SetCornerRadius(e12)
+            e39("corner", e12)
+        end,
     })
-    c:AddDivider()
-    c:AddLabel("Menu bind")
-    c:AddLabel("Press to capture a new key for toggling the interface", true)
-    c:AddLabel("Keybind"):AddKeyPicker("MenuKeybind", {
-        Default = e10.key,
+    e11:AddDivider()
+    e11:AddLabel("Menu bind")
+    e11:AddLabel("Press to capture a new key for toggling the interface", true)
+    e11:AddLabel("Keybind"):AddKeyPicker("MenuKeybind", {
+        Default = e33.key,
         Mode = "Toggle",
         Text = "Toggle eSPTS",
         NoUI = true,
-        ChangedCallback = function(d)
-            if e40 then return end
-            e10.key = d.Name
-            esq()
-            e22("Keybind \xe2\x80\x94 " .. d.Name)
-        end
+        ChangedCallback = function(e12)
+            if e76 then
+                return
+            end
+            e33.key = e12.Name
+            e38()
+            e48("Keybind \xe2\x80\x94 " .. e12.Name)
+        end,
     })
-    e35.ToggleKeybind = e36.MenuKeybind
-    c:AddDivider()
-    c:AddToggle("AutoHide", {
+    e71.ToggleKeybind = e72.MenuKeybind
+    e11:AddDivider()
+    e11:AddToggle("AutoHide", {
         Text = "Auto Hide UI",
-        Default = e10.hide,
-        Callback = function(d)
-            if e40 then return end
-            e10.hide = d
-            e22(d and "Auto Hide enabled" or "Auto Hide disabled")
-            esq()
-        end
+        Default = e33.hide,
+        Callback = function(e12)
+            if e76 then
+                return
+            end
+            e33.hide = e12
+            e48(e12 and "Auto Hide enabled" or "Auto Hide disabled")
+            e38()
+        end,
     })
-    c:AddLabel("Auto Hide starts the interface hidden on the next execution.", true)
-    if typeof(e10.ui) == "table" then
-        local d = e10.ui
-        if typeof(d.cur) == "boolean" then e37.ShowCustomCursor:SetValue(d.cur) end
-        if typeof(d.top) == "boolean" then e37.AlwaysOnTop:SetValue(d.top) end
-        if d.nside == "Left" or d.nside == "Right" then e36.NotificationSide:SetValue(d.nside) end
-        if typeof(d.dpi) == "string" and table.find(e36.DPIDropdown.Values or {}, d.dpi) then
-            e36.DPIDropdown:SetValue(d.dpi)
+    e11:AddLabel("Auto Hide starts the interface hidden on the next execution.", true)
+    if typeof(e33.ui) == "table" then
+        local e12 = e33.ui
+        if typeof(e12.cur) == "boolean" then
+            e73.ShowCustomCursor:SetValue(e12.cur)
         end
-        if typeof(d.corner) == "number" and d.corner >= 0 and d.corner <= 20 then e36.UICornerSlider:SetValue(d.corner) end
-        if typeof(d.kbmenu) == "boolean" then e37.KeybindMenuOpen:SetValue(d.kbmenu) end
+        if typeof(e12.top) == "boolean" then
+            e73.AlwaysOnTop:SetValue(e12.top)
+        end
+        if e12.nside == "Left" or e12.nside == "Right" then
+            e72.NotificationSide:SetValue(e12.nside)
+        end
+        if typeof(e12.dpi) == "string" and table.find(e72.DPIDropdown.Values or {}, e12.dpi) then
+            e72.DPIDropdown:SetValue(e12.dpi)
+        end
+        if typeof(e12.corner) == "number" and e12.corner >= 0 and e12.corner <= 20 then
+            e72.UICornerSlider:SetValue(e12.corner)
+        end
+        if typeof(e12.kbmenu) == "boolean" then
+            e73.KeybindMenuOpen:SetValue(e12.kbmenu)
+        end
     end
-    local a, b = nil, nil
+    local e7, e9 = nil, nil
     pcall(function()
-        a = loadstring(elr("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/addons/ThemeManager.lua"))()
+        e7 = loadstring(
+            e70("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/addons/ThemeManager.lua")
+        )()
     end)
-    if not egd() or e35.Unloaded then return end
+    if not e20() or e71.Unloaded then
+        return
+    end
     pcall(function()
-        b = loadstring(elr("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/addons/SaveManager.lua"))()
+        e9 = loadstring(
+            e70("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/addons/SaveManager.lua")
+        )()
     end)
-    if not egd() or e35.Unloaded then return end
-    if typeof(a) == "table" then
-        a:SetLibrary(e35)
-        a:SetFolder("eSPTS_Obsidian")
-        a:ApplyToTab(e39["Settings"])
-        e7.thmData = function()
-            local d = {}
-            for _, f in ipairs({ "BackgroundColor", "MainColor", "AccentColor", "OutlineColor", "FontColor" }) do
-                local g = e36[f]
-                if g and typeof(g.Value) == "Color3" then
-                    d[f] = "#" .. g.Value:ToHex()
+    if not e20() or e71.Unloaded then
+        return
+    end
+    if typeof(e7) == "table" then
+        e7:SetLibrary(e71)
+        e7:SetFolder("eSPTS_Obsidian")
+        e7:ApplyToTab(e75["Settings"])
+        e19.thmData = function()
+            local e12 = {}
+            for e8, e13 in ipairs({
+                "BackgroundColor",
+                "MainColor",
+                "AccentColor",
+                "OutlineColor",
+                "FontColor",
+            }) do
+                local e14 = e72[e13]
+                if e14 and typeof(e14.Value) == "Color3" then
+                    e12[e13] = "#" .. e14.Value:ToHex()
                 end
             end
-            local f = e36.FontFace
-            if f and typeof(f.Value) == "string" then d.FontFace = f.Value end
-            local g = e36.BackgroundImage
-            if g and typeof(g.Value) == "string" and g.Value ~= "" then d.BackgroundImage = g.Value end
-            return d
+            local e13 = e72.FontFace
+            if e13 and typeof(e13.Value) == "string" then
+                e12.FontFace = e13.Value
+            end
+            local e14 = e72.BackgroundImage
+            if e14 and typeof(e14.Value) == "string" and e14.Value ~= "" then
+                e12.BackgroundImage = e14.Value
+            end
+            return e12
         end
-        if typeof(e10.ui) == "table" and typeof(e10.ui.td) == "table" then
-            pcall(a.ApplyThemeData, a, e10.ui.td)
+        if typeof(e33.ui) == "table" and typeof(e33.ui.td) == "table" then
+            pcall(e7.ApplyThemeData, e7, e33.ui.td)
         end
-        e17("THM", function()
-            local d = nil
-            while egd() and not e35.Unloaded do
-                local f = {}
-                for _, g in ipairs({ "BackgroundColor", "MainColor", "AccentColor", "OutlineColor", "FontColor", "FontFace", "BackgroundImage" }) do
-                    local h = e36[g]
-                    if h then f[#f + 1] = g .. "=" .. tostring(h.Value) end
-                end
-                table.sort(f)
-                local g = table.concat(f, "|")
-                if d ~= nil and g ~= d and e7.thmData then
-                    local h, i = pcall(e7.thmData)
-                    if h and typeof(i) == "table" then
-                        if typeof(e10.ui) ~= "table" then e10.ui = {} end
-                        e10.ui.td = i
-                        esq()
+        e43("THM", function()
+            local e12 = nil
+            while e20() and not e71.Unloaded do
+                local e13 = {}
+                for e8, e14 in ipairs({
+                    "BackgroundColor",
+                    "MainColor",
+                    "AccentColor",
+                    "OutlineColor",
+                    "FontColor",
+                    "FontFace",
+                    "BackgroundImage",
+                }) do
+                    local e15 = e72[e14]
+                    if e15 then
+                        e13[#e13 + 1] = e14 .. "=" .. tostring(e15.Value)
                     end
                 end
-                d = g
+                table.sort(e13)
+                local e14 = table.concat(e13, "|")
+                if e12 ~= nil and e14 ~= e12 and e19.thmData then
+                    local e15, e16 = pcall(e19.thmData)
+                    if e15 and typeof(e16) == "table" then
+                        if typeof(e33.ui) ~= "table" then
+                            e33.ui = {}
+                        end
+                        e33.ui.td = e16
+                        e38()
+                    end
+                end
+                e12 = e14
                 task.wait(1.5)
             end
         end)
     else
         warn("[eSPTS] ThemeManager unavailable - Themes section skipped")
-        e22("Themes section skipped \xe2\x80\x94 ThemeManager could not load")
+        e48("Themes section skipped \xe2\x80\x94 ThemeManager could not load")
     end
-    if typeof(b) == "table" then
-        b:SetLibrary(e35)
-        b:IgnoreThemeSettings()
-        b:SetIgnoreIndexes({ "MenuKeybind" })
-        b:SetFolder("eSPTS_Obsidian")
-        local d = { b.SaveAutoloadConfig, b.DeleteAutoLoadConfig }
-        b.GetAutoloadConfig = function()
-            if typeof(e10.alsm) == "string" and e10.alsm ~= "" then
-                b.AutoloadConfig = e10.alsm
-                return e10.alsm, true
+    if typeof(e9) == "table" then
+        e9:SetLibrary(e71)
+        e9:IgnoreThemeSettings()
+        e9:SetIgnoreIndexes({ "MenuKeybind" })
+        e9:SetFolder("eSPTS_Obsidian")
+        local e12 = { e9.SaveAutoloadConfig, e9.DeleteAutoLoadConfig }
+        e9.GetAutoloadConfig = function()
+            if typeof(e33.alsm) == "string" and e33.alsm ~= "" then
+                e9.AutoloadConfig = e33.alsm
+                return e33.alsm, true
             end
-            b.AutoloadConfig = nil
+            e9.AutoloadConfig = nil
             return "none", false, "Autoload config is not set"
         end
-        b.SaveAutoloadConfig = function(f, g)
-            local h, i = d[1](b, g)
-            if h then
-                e10.alsm = g
-                esq()
+        e9.SaveAutoloadConfig = function(e13, e14)
+            local e15, e16 = e12[1](e9, e14)
+            if e15 then
+                e33.alsm = e14
+                e38()
             end
-            return h, i
+            return e15, e16
         end
-        b.DeleteAutoLoadConfig = function(f)
-            local h, i = d[2](b)
-            if h then
-                e10.alsm = nil
-                esq()
+        e9.DeleteAutoLoadConfig = function(e13)
+            local e15, e16 = e12[2](e9)
+            if e15 then
+                e33.alsm = nil
+                e38()
             end
-            return h, i
+            return e15, e16
         end
-        e7.smSave = function()
-            pcall(b.Save, b, e8)
+        e19.smSave = function()
+            pcall(e9.Save, e9, e31)
         end
-        e7.smSave()
-        e17("SM", function()
-            local f = nil
-            while egd() and not e35.Unloaded do
-                local g = {}
-                for h, i in pairs(e35.Toggles) do
-                    if i.Type and not b.Ignore[h] then
-                        g[#g + 1] = h .. "=" .. tostring(i.Value)
+        e19.smSave()
+        e43("SM", function()
+            local e13 = nil
+            while e20() and not e71.Unloaded do
+                local e14 = {}
+                for e15, e16 in pairs(e71.Toggles) do
+                    if e16.Type and not e9.Ignore[e15] then
+                        e14[#e14 + 1] = e15 .. "=" .. tostring(e16.Value)
                     end
                 end
-                for h, i in pairs(e35.Options) do
-                    if i.Type and not b.Ignore[h] then
-                        g[#g + 1] = h .. "=" .. tostring(i.Value)
+                for e15, e16 in pairs(e71.Options) do
+                    if e16.Type and not e9.Ignore[e15] then
+                        e14[#e14 + 1] = e15 .. "=" .. tostring(e16.Value)
                     end
                 end
-                table.sort(g)
-                local h = table.concat(g, "|")
-                if f ~= nil and h ~= f then
-                    esq()
+                table.sort(e14)
+                local e15 = table.concat(e14, "|")
+                if e13 ~= nil and e15 ~= e13 then
+                    e38()
                 end
-                f = h
+                e13 = e15
                 task.wait(1.5)
             end
         end)
-        b:BuildConfigSection(e39["Settings"])
-        b:LoadAutoloadConfig()
+        e9:BuildConfigSection(e75["Settings"])
+        e9:LoadAutoloadConfig()
     else
         warn("[eSPTS] SaveManager unavailable - Configuration section skipped")
-        e22("Configuration section skipped \xe2\x80\x94 SaveManager could not load")
+        e48("Configuration section skipped \xe2\x80\x94 SaveManager could not load")
     end
 end
 
-
 do
-    local a = e39["Settings"]:AddRightGroupbox("Activity Log", "scroll")
-    local b = a:AddLabel("No activity yet.", true)
-    e21 = function()
-        local c = {}
-        local d = math.max(1, #e20 - 11)
-        for f = d, #e20 do
-            c[#c + 1] = "[" .. e20[f].t .. "] " .. e20[f].m
+    local e7 = e75["Settings"]:AddRightGroupbox("Activity Log", "scroll")
+    local e9 = e7:AddLabel("No activity yet.", true)
+    e47 = function()
+        local e11 = {}
+        local e12 = math.max(1, #e46 - 11)
+        for e13 = e12, #e46 do
+            e11[#e11 + 1] = "[" .. e46[e13].t .. "] " .. e46[e13].m
         end
-        b:SetText(#c > 0 and table.concat(c, "\n") or "No activity yet.")
+        e9:SetText(#e11 > 0 and table.concat(e11, "\n") or "No activity yet.")
     end
-    e21()
-    a:AddButton({
+    e47()
+    e7:AddButton({
         Text = "Clear",
         Func = function()
-            table.clear(e20)
-            e21()
-        end
+            table.clear(e46)
+            e47()
+        end,
     })
 end
 
-
 do
-    local a = e39["Settings"]:AddRightGroupbox("Danger Zone", "triangle-alert")
-    a:AddLabel("Fully unloads eSPTS and closes everything it created", true)
-    local b = false
-    local c
-    local function d()
-        pcall(esv)
-        ecl(e7)
+    local e7 = e75["Settings"]:AddRightGroupbox("Danger Zone", "triangle-alert")
+    e7:AddLabel("Fully unloads eSPTS and closes everything it created", true)
+    local e9 = false
+    local e11
+    local function e12()
+        pcall(e37)
+        e6(e19)
     end
-    local f
-    f = a:AddButton({
+    local e13
+    e13 = e7:AddButton({
         Text = "Uninject",
         Func = function()
-            if not e19("UN", 0.15) then return end
-            if not b then
-                b = true
-                f:SetText("Click again to confirm")
-                e35:Notify({ Title = "eSPTS", Description = "Click Uninject again to confirm", Time = 3 })
-                c = task.delay(3, function()
-                    b = false
-                    f:SetText("Uninject")
+            if not e45("UN", 0.15) then
+                return
+            end
+            if not e9 then
+                e9 = true
+                e13:SetText("Click again to confirm")
+                e71:Notify({ Title = "eSPTS", Description = "Click Uninject again to confirm", Time = 3 })
+                e11 = task.delay(3, function()
+                    e9 = false
+                    e13:SetText("Uninject")
                 end)
                 return
             end
-            if c then pcall(task.cancel, c) end
-            b = false
-            f:SetText("Uninjecting...")
-            task.delay(0.15, function() d() end)
-        end
+            if e11 then
+                pcall(task.cancel, e11)
+            end
+            e9 = false
+            e13:SetText("Uninjecting...")
+            task.delay(0.15, function()
+                e12()
+            end)
+        end,
     })
 end
 
-
-e35:OnUnload(function()
-    pcall(esv)
-    ecl(e7)
+e71:OnUnload(function()
+    pcall(e37)
+    e6(e19)
 end)
 
-
 do
-    local a = e49
-    if a then
-        e41(function()
-            e37.AutoWeight:SetValue(e10.weight)
+    local e7 = e41
+    if e7 then
+        e77(function()
+            e73.AutoWeight:SetValue(e33.weight)
         end)
-        e45(true)
-        e47.apply()
-        if e10.stat then
-            for b, c in pairs(e42.rows) do
-                if b == e10.stat then
-                    e41(function()
-                        e37[c]:SetValue(true)
+        e81(true)
+        e84.apply()
+        if e33.stat then
+            for e9, e11 in pairs(e78.rows) do
+                if e9 == e33.stat then
+                    e77(function()
+                        e73[e11]:SetValue(true)
                     end)
-                    local d = e29(b)
-                    local f
-                    if b == "BodyToughness" and e10.mode == "c" then f = e31(b, d) else f = e30(b, d) end
-                    if f then
-                        local g = e32(b, f)
-                        if g then
-                            local h, i = e33(g)
-                            if h then
-                                e42.area = g
-                                e42.anchor = i
-                                if b == "BodyToughness" and e10.mode then
-                                    local j = e10.mode == "n" and "Next" or "Current"
-                                    e42.status:SetText(e42.names[b] .. " (" .. j .. ") \xe2\x80\x94 Area: " .. f .. " (req " .. e23[b][f].req .. " --> " .. eab(e23[b][f].req) .. ")" .. egv(b))
+                    local e12 = e60(e9)
+                    local e13
+                    if e9 == "BodyToughness" and e33.mode == "c" then
+                        e13 = e62(e9, e12)
+                    else
+                        e13 = e61(e9, e12)
+                    end
+                    if e13 then
+                        local e14 = e63(e9, e13)
+                        if e14 then
+                            local e15, e16 = e64(e14)
+                            if e15 then
+                                e78.area = e14
+                                e78.anchor = e16
+                                if e9 == "BodyToughness" and e33.mode then
+                                    local e17 = e33.mode == "n" and "Next" or "Current"
+                                    e78.status:SetText(
+                                        e78.names[e9]
+                                            .. " ("
+                                            .. e17
+                                            .. ") \xe2\x80\x94 Area: "
+                                            .. e13
+                                            .. " (req "
+                                            .. e49[e9][e13].req
+                                            .. " --> "
+                                            .. e53(e49[e9][e13].req)
+                                            .. ")"
+                                            .. e59(e9)
+                                    )
                                 else
-                                    e42.status:SetText(e42.names[b] .. " \xe2\x80\x94 Area: " .. f .. " (req " .. e23[b][f].req .. " --> " .. eab(e23[b][f].req) .. ")" .. egv(b))
+                                    e78.status:SetText(
+                                        e78.names[e9]
+                                            .. " \xe2\x80\x94 Area: "
+                                            .. e13
+                                            .. " (req "
+                                            .. e49[e9][e13].req
+                                            .. " --> "
+                                            .. e53(e49[e9][e13].req)
+                                            .. ")"
+                                            .. e59(e9)
+                                    )
                                 end
-                                e42.base = e42.status.Text
+                                e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
                             end
                         end
                     end
                 end
             end
-            if e10.stat == "BodyToughness" and e10.mode then
-                e41(function()
-                    e37[e10.mode == "c" and "BTCurrent" or "BTNext"]:SetValue(true)
+            if e33.stat == "BodyToughness" and e33.mode then
+                e77(function()
+                    e73[e33.mode == "c" and "BTCurrent" or "BTNext"]:SetValue(true)
                 end)
             end
-            if e10.stat == "PsychicPower" then epm(true) end
+            if e33.stat == "PsychicPower" then
+                e69(true)
+            end
         else
-            e42.status:SetText("No active training")
+            e78.status:SetText("No active training")
         end
-        if e10.save then e48.s:SetText("Position loaded from config!") end
-        local g = e39[e10.tab]
-        if g then g:Show() else e39["Auto Farm"]:Show() end
-        e22("Config loaded for " .. e8)
-        e35:Notify({ Title = "eSPTS", Description = "Config loaded for " .. e8, Time = 4 })
+        if e33.save then
+            e85.s:SetText("Position loaded from config!")
+        end
+        local e14 = e75[e33.tab]
+        if e14 then
+            e14:Show()
+        else
+            e75["Auto Farm"]:Show()
+        end
+        e48("Config loaded for " .. e31)
+        e71:Notify({ Title = "eSPTS", Description = "Config loaded for " .. e31, Time = 4 })
     else
-        e39["Auto Farm"]:Show()
-        e22("Fresh start \xe2\x80\x94 no saved config")
-        e35:Notify({ Title = "eSPTS", Description = "Fresh start \xe2\x80\x94 no saved config", Time = 4 })
+        e75["Auto Farm"]:Show()
+        e48("Fresh start \xe2\x80\x94 no saved config")
+        e71:Notify({ Title = "eSPTS", Description = "Fresh start \xe2\x80\x94 no saved config", Time = 4 })
     end
 end
 
-
-e18(e1.Heartbeat, function()
-    if e35.Unloaded or not egd() or not e7.gui or not e7.gui.Parent then
-        ecl(e7)
+e44(e1.Heartbeat, function()
+    if e71.Unloaded or not e20() or not e19.gui or not e19.gui.Parent then
+        e6(e19)
         return
     end
-    if e10.save and e4.Character and e4.Character:FindFirstChild("HumanoidRootPart") then
-        local a = e4.Character.HumanoidRootPart
-        if (a.Position - e10.save.Position).Magnitude > 20 then a.CFrame = e10.save end
-    end
-    if tick() - e42.rtr >= 0.5 then
-        e42.rtr = tick()
-        local a = egr[e10.stat]
-        if a and #a.b > 0 and tick() - a.b[#a.b][1] > 10.5 then a.r = 0 end
-        if e42.base and e10.stat and e42.status.Text:find(" \xe2\x80\x94 Area: ", 1, true) then
-            e42.status:SetText(e42.base .. egv(e10.stat))
+    if e33.save and not e33.stat and e4.Character and e4.Character:FindFirstChild("HumanoidRootPart") then
+        local e7 = e4.Character.HumanoidRootPart
+        if (e7.Position - e33.save.Position).Magnitude > 20 then
+            e7.CFrame = e33.save
         end
     end
-    if not e10.stat then return end
-    local b = e4.Character
-    if not b then return end
-    local c = b:FindFirstChild("HumanoidRootPart")
-    if not c then return end
-    local d = e29(e10.stat)
-    local f
-    if e10.mode == "c" and e10.stat == "BodyToughness" then f = e31(e10.stat, d) else f = e30(e10.stat, d) end
-    if f and (not e42.area or e42.area.Name ~= f) then
-        local g = e32(e10.stat, f)
-        if g then
-            local h, i = e33(g)
-            if h then
-                e42.area = g
-                e42.anchor = i
-                if e10.stat == "BodyToughness" and e10.mode then
-                    local j = e10.mode == "n" and "Next" or "Current"
-                    e42.status:SetText(e42.names[e10.stat] .. " (" .. j .. ") \xe2\x80\x94 Area: " .. f .. " (req " .. e23[e10.stat][f].req .. " --> " .. eab(e23[e10.stat][f].req) .. ")" .. egv(e10.stat))
+    if tick() - e78.rtr >= 0.5 then
+        e78.rtr = tick()
+        local e7 = e56[e33.stat]
+        if e7 and #e7.b > 0 and tick() - e7.b[#e7.b][1] > 10.5 then
+            e7.r = 0
+        end
+        if e78.base and e33.stat and e78.status.Text:find(" \xe2\x80\x94 Area: ", 1, true) then
+            e78.status:SetText(e78.base .. e59(e33.stat))
+        end
+    end
+    if not e33.stat then
+        return
+    end
+    local e9 = e4.Character
+    if not e9 then
+        return
+    end
+    local e11 = e9:FindFirstChild("HumanoidRootPart")
+    if not e11 then
+        return
+    end
+    local e12 = e60(e33.stat)
+    local e13
+    if e33.mode == "c" and e33.stat == "BodyToughness" then
+        e13 = e62(e33.stat, e12)
+    else
+        e13 = e61(e33.stat, e12)
+    end
+    if e13 and (not e78.area or e78.area.Name ~= e13) then
+        local e14 = e63(e33.stat, e13)
+        if e14 then
+            local e15, e16 = e64(e14)
+            if e15 then
+                e78.area = e14
+                e78.anchor = e16
+                if e33.stat == "BodyToughness" and e33.mode then
+                    local e17 = e33.mode == "n" and "Next" or "Current"
+                    e78.status:SetText(
+                        e78.names[e33.stat]
+                            .. " ("
+                            .. e17
+                            .. ") \xe2\x80\x94 Area: "
+                            .. e13
+                            .. " (req "
+                            .. e49[e33.stat][e13].req
+                            .. " --> "
+                            .. e53(e49[e33.stat][e13].req)
+                            .. ")"
+                            .. e59(e33.stat)
+                    )
                 else
-                    e42.status:SetText(e42.names[e10.stat] .. " \xe2\x80\x94 Area: " .. f .. " (req " .. e23[e10.stat][f].req .. " --> " .. eab(e23[e10.stat][f].req) .. ")" .. egv(e10.stat))
+                    e78.status:SetText(
+                        e78.names[e33.stat]
+                            .. " \xe2\x80\x94 Area: "
+                            .. e13
+                            .. " (req "
+                            .. e49[e33.stat][e13].req
+                            .. " --> "
+                            .. e53(e49[e33.stat][e13].req)
+                            .. ")"
+                            .. e59(e33.stat)
+                    )
                 end
-                e42.base = e42.status.Text
+                e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
             end
         end
     end
-    if e42.anchor and (c.Position - e42.anchor.Position).Magnitude > 45 then c.CFrame = e42.anchor end
-    if e10.stat == "FistStrength" then
-        efr(eF)
-    elseif e10.stat == "MovementSpeed" then
-        if tick() - e42.thr >= 0.1 then
-            e42.thr = tick()
-            efr(eM)
+    if e78.anchor and (e11.Position - e78.anchor.Position).Magnitude > 45 then
+        e11.CFrame = e78.anchor
+    end
+    if e33.stat == "FistStrength" then
+        e27(e28)
+    elseif e33.stat == "MovementSpeed" then
+        if tick() - e78.thr >= 0.1 then
+            e78.thr = tick()
+            e27(e29)
         end
-    elseif e10.stat == "JumpForce" then
-        if tick() - e42.thr >= 0.1 then
-            e42.thr = tick()
-            efr(eJ)
+    elseif e33.stat == "JumpForce" then
+        if tick() - e78.thr >= 0.1 then
+            e78.thr = tick()
+            e27(e30)
         end
     end
 end)
 
-
-e18(e4.CharacterAdded, function(a)
-    if e35.Unloaded or not egd() then return end
+e44(e4.CharacterAdded, function(e7)
+    if e71.Unloaded or not e20() then
+        return
+    end
     task.wait(0.5)
-    if e35.Unloaded or not egd() then return end
-    local b = a:WaitForChild("HumanoidRootPart", 5)
-    if e10.save then
+    if e71.Unloaded or not e20() then
+        return
+    end
+    local e9 = e7:WaitForChild("HumanoidRootPart", 5)
+    if e33.save and not e33.stat then
         task.wait(0.1)
-        if b then b.CFrame = e10.save end
+        if e9 then
+            e9.CFrame = e33.save
+        end
     end
-    if e10.weight then
+    if e33.weight then
         task.wait(0.15)
-        e34(true)
-        e44()
+        e68(true)
+        e80()
     end
-    if e10.stat and e42.area then
-        local c, d = e33(e42.area)
-        if c then e42.anchor = d end
+    if e33.stat and e78.area then
+        local e11, e12 = e64(e78.area)
+        if e11 then
+            e78.anchor = e12
+        end
     end
-    if e10.stat == "PsychicPower" then epm(true) end
+    if e33.stat == "PsychicPower" then
+        e69(true)
+    end
 end)
 
 if e4.Character then
     task.wait(0.5)
-    if e35.Unloaded or not egd() then return end
-    if e10.save and e4.Character:FindFirstChild("HumanoidRootPart") then
-        e4.Character.HumanoidRootPart.CFrame = e10.save
+    if e71.Unloaded or not e20() then
+        return
+    end
+    if e33.save and not e33.stat and e4.Character:FindFirstChild("HumanoidRootPart") then
+        e4.Character.HumanoidRootPart.CFrame = e33.save
     end
 end
