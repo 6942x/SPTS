@@ -12,7 +12,6 @@ General
 [+] Hitbox: Head / Neck / Chest / Body / Nearest
 
 {Context}
-[+] Limit “legit” FOV
 [+] FOV setting
 [+] Smooth
 [+] Randomization
@@ -23,10 +22,6 @@ General
 [+] Weapon groups: Rifle / SMG / LMG / Sniper / Shotgun / Pistol / Grenade Launcher
 [+] FOV setting
 [+] Smooth
-
-{Exploits (Unsafe Mode)}
-[+] No recoil
-[+] No spread
 
 {Visuals}
 
