@@ -47,8 +47,7 @@ General
 [+] Draw distance
 
 {Other Settings}
-[+] FightMode
-[+] Language: English / Chinese
+[+] Language: English / Spanish / Portuguese
 
 {Config}
 [+] Create
