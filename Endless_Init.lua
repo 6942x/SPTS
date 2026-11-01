@@ -132,12 +132,15 @@ local e33 = {
     as = true,
     tab = "Auto Farm",
     save = nil,
-    mode = nil,
+    mode = "n",
     hide = false,
     rsp = false,
     rtype = "Normal",
     alsm = nil,
     ui = nil,
+    farmUntil = {},
+    farmUntilEnabled = false,
+    farmStopped = false,
 }
 
 local e34 = "eSPTS_Obsidian/Accounts/" .. e31 .. ".json"
@@ -176,6 +179,9 @@ local function e37()
         rtype = e33.rtype,
         alsm = e33.alsm,
         ui = e33.ui,
+        farmUntil = e33.farmUntil,
+        farmUntilEnabled = e33.farmUntilEnabled,
+        farmStopped = e33.farmStopped,
     }
     local e11 = pcall(function()
         writefile(e34, e2:JSONEncode(e9))
@@ -249,12 +255,15 @@ local function e40()
     if typeof(e9.save) == "table" and #e9.save == 12 then
         e33.save = CFrame.new(unpack(e9.save))
     end
-    e33.mode = e9.mode
+    e33.mode = e9.mode == "c" and "c" or "n"
     e33.rsp = e9.rsp == true
     e33.rtype = (e9.rtype == "Risky" or e9.rtype == "Normal") and e9.rtype or "Normal"
     e33.hide = e9.hide or false
     e33.alsm = typeof(e9.alsm) == "string" and e9.alsm ~= "" and e9.alsm or nil
     e33.ui = typeof(e9.ui) == "table" and e9.ui or nil
+    e33.farmUntil = typeof(e9.farmUntil) == "table" and e9.farmUntil or {}
+    e33.farmUntilEnabled = e9.farmUntilEnabled == true
+    e33.farmStopped = e9.farmStopped == true
     return true
 end
 
@@ -485,25 +494,16 @@ end
 
 local function e53(e7)
     local e9 = tonumber(e7)
-    if not e9 then
+    if not e9 or e9 ~= e9 or math.abs(e9) == math.huge then
         return tostring(e7)
     end
-    if e9 < 1000 then
-        return string.format("%g", e9)
-    end
-    local e11, e12
-    for e8, e in ipairs(e51) do
-        if e9 >= e[2] then
-            e11, e12 = e[1], e[2]
+    local e11, e12 = "", 1
+    for e8, e13 in ipairs(e51) do
+        if math.abs(e9) >= e13[2] then
+            e11, e12 = e13[1], e13[2]
         end
     end
-    local e13 = e9 / e12
-    local e14 = e13 >= 100 and 0 or e13 >= 10 and 1 or 2
-    local e15 = string.format("%." .. e14 .. "f", e13)
-    if e15:find("%.") then
-        e15 = e15:gsub("0+$", ""):gsub("%.$", "")
-    end
-    return e15 .. e11
+    return string.format("%.1f", e9 / e12) .. e11
 end
 
 local e54 = {}
@@ -582,6 +582,78 @@ local function e60(e7)
     end
     return e52(e9.Text)
 end
+
+local function e900(e901)
+    local e902 = tostring(e901 or ""):gsub("<[^>]+>", ""):gsub("[, %s]", "")
+    local e903 = tonumber(e902)
+    if not e903 then
+        local e904, e905 = e902:match("^(%d*%.?%d+)(%a+)$")
+        if e904 then
+            for e906, e907 in ipairs(e51) do
+                if e907[1]:lower() == e905:lower() then
+                    e903 = tonumber(e904) * e907[2]
+                    break
+                end
+            end
+        end
+    end
+    if e903 and e903 == e903 and e903 >= 0 and e903 < math.huge then
+        return e903
+    end
+end
+
+local function e908(e901)
+    if not e20() then
+        return nil
+    end
+    local e902 = e55[e901]
+    if not e902 or not e902.Parent then
+        local e903 = ({
+            FistStrength = "FSTxt",
+            BodyToughness = "BTTxt",
+            MovementSpeed = "MSTxt",
+            JumpForce = "JFTxt",
+            PsychicPower = "PPTxt",
+        })[e901]
+        local e904 = e4:FindFirstChildOfClass("PlayerGui")
+        e902 = e903 and e904 and e904:FindFirstChild(e903, true)
+        e55[e901] = e902
+    end
+    if not e902 or not e902.Parent then
+        return nil
+    end
+    local e903 = tostring(e902.Text or ""):gsub("<[^>]+>", "")
+    return e900(
+        e903:match(".*:%s*(.-)%s*$")
+            or e903:match("([%d%.]+[eE][+%-]?%d+)%s*$")
+            or e903:match("([%d%.,]+%s*%a*)%s*$")
+    )
+end
+
+e19.FarmBridge = {
+    Version = 1,
+    UserId = e4.UserId,
+    PlaceId = game.PlaceId,
+    Read = function()
+        if not e20() then
+            return nil
+        end
+        local e901 = { UserId = e4.UserId, PlaceId = game.PlaceId, Time = os.clock(), Stats = {} }
+        for e902, e903 in pairs({
+            FS = "FistStrength",
+            BT = "BodyToughness",
+            MS = "MovementSpeed",
+            JF = "JumpForce",
+            PP = "PsychicPower",
+        }) do
+            local e904 = e908(e903)
+            if e904 ~= nil then
+                e901.Stats[e902] = { Value = e904, Rate = e56[e903] and e56[e903].r or 0 }
+            end
+        end
+        return e901
+    end,
+}
 
 local function e61(e7, e9)
     local e11 = e54[e7]
@@ -693,6 +765,15 @@ local function e68(e7)
     end
 end
 
+local function e918()
+    local e901 = e4.Character
+    local e902 = e901 and e901:FindFirstChild("HumanoidRootPart")
+    if e902 and (not e33.stat or e19.farmCharacter ~= e901) then
+        e19.farmOrigin = e902.CFrame
+        e19.farmCharacter = e901
+    end
+end
+
 local function e69(e7)
     if e7 then
         e43("PP", function()
@@ -779,9 +860,22 @@ local function e70(e7)
     )
 end
 
+local function e920(e901)
+    local e902, e903 = e901:gsub(
+        "Row:UpdateButton%(%)%s+Dropdown:Display%(%)%s+Library:UpdateDependencyBoxes%(%)%s+Dropdown:RunChanged%(%)",
+        "Row:UpdateButton() Dropdown:Display() if not Info.Multi then MenuTable:Close() end Library:UpdateDependencyBoxes() Dropdown:RunChanged()"
+    )
+    if e903 == 0 then
+        warn("[eSPTS] Obsidian dropdown close patch did not match this library version")
+    end
+    return e902
+end
+
 local e71 = (function()
     local e7, e9 = pcall(function()
-        return loadstring(e70("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua"))()
+        return loadstring(
+            e920(e70("https://raw.githubusercontent.com/deividcomsono/Obsidian/main/Library.lua"))
+        )()
     end)
     if not e7 or typeof(e9) ~= "table" then
         error("[eSPTS] Obsidian library failed to load - " .. tostring(e9), 0)
@@ -796,6 +890,11 @@ if not e20() then
         end
     end)
     return
+end
+
+if type(e71.Animations) == "table" then
+    e71.Animations.Dropdown = true
+    e71.DropdownTransitionInfo = TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 end
 
 local e72 = e71.Options
@@ -875,7 +974,6 @@ do
     local e9 = e7:AddLabel("No active training", true)
     e78.status = e9
     e7:AddDivider()
-    e7:AddLabel("Select a stat to automatically train at the best available area", true)
     local e11 = {
         FistStrength = "Fist Strength",
         BodyToughness = "Body Toughness",
@@ -907,31 +1005,38 @@ do
                                 end
                             end
                         end
-                        if e14 ~= "BodyToughness" then
-                            if e73.BTCurrent.Value then
-                                e73.BTCurrent:SetValue(false)
-                            end
-                            if e73.BTNext.Value then
-                                e73.BTNext:SetValue(false)
-                            end
-                        end
                     end)
+                    if e33.farmUntilEnabled then
+                        local e901 = e900(e33.farmUntil[e14])
+                        local e902 = e908(e14)
+                        if e901 and e902 and e902 >= e901 then
+                            e77(function()
+                                e73["Stat_" .. e14]:SetValue(false)
+                            end)
+                            e78.status:SetText("Farm target already reached")
+                            return
+                        end
+                    end
+                    e33.farmStopped = false
+                    e918()
                     e33.stat = e14
                     e78.area = nil
                     e78.anchor = nil
                     e78.base = nil
                     if e14 ~= "BodyToughness" then
-                        e33.mode = nil
                     end
                     if e14 == "PsychicPower" then
                         e69(true)
                     end
                     local e16 = e60(e14)
-                    local e17 = e61(e14, e16)
+                    local e17 = e14 == "BodyToughness" and e33.mode == "c" and e62(e14, e16) or nil
+                    if not (e14 == "BodyToughness" and e33.mode == "c") then
+                        e17 = e61(e14, e16)
+                    end
                     if not e17 then
                         e78.status:SetText(e11[e14] .. " \xe2\x80\x94 No available area")
                         e78.area = nil
-                        e33.mode = nil
+
                         e38()
                         e48(e11[e14] .. " \xe2\x80\x94 No area found")
                         return
@@ -940,7 +1045,7 @@ do
                     e78.area = e18
                     if not e18 then
                         e78.status:SetText("Area '" .. e17 .. "' not found!")
-                        e33.mode = nil
+
                         e38()
                         e48("Area '" .. e17 .. "' not found")
                         return
@@ -969,18 +1074,10 @@ do
                     e33.stat = nil
                     e78.area = nil
                     e78.anchor = nil
-                    e33.mode = nil
+
                     if e14 == "PsychicPower" then
                         e69(false)
                     end
-                    e77(function()
-                        if e73.BTCurrent.Value then
-                            e73.BTCurrent:SetValue(false)
-                        end
-                        if e73.BTNext.Value then
-                            e73.BTNext:SetValue(false)
-                        end
-                    end)
                     e78.status:SetText("No active training")
                     e48(e11[e14] .. " \xe2\x80\x94 Stopped")
                 end
@@ -992,174 +1089,47 @@ end
 
 do
     local e7 = e75["Auto Farm"]:AddRightGroupbox("Body Toughness Mode", "shield")
-    e7:AddLabel("Train in your current area or jump ahead to the next unlocked one", true)
+    e7:AddLabel("Choose a mode here, then enable Body Toughness in Stat Training.", true)
     e7:AddDivider()
+    local function e924(e901, e902)
+        if e76 then
+            return
+        end
+        if not e902 then
+            if e33.mode == e901 then
+                e77(function()
+                    local e903 = e73[e901 == "c" and "BTCurrent" or "BTNext"]
+                    if e903 then
+                        e903:SetValue(true)
+                    end
+                end)
+            end
+            return
+        end
+        e33.mode = e901
+        e77(function()
+            local e903 = e73[e901 == "c" and "BTNext" or "BTCurrent"]
+            if e903 and e903.Value then
+                e903:SetValue(false)
+            end
+        end)
+        if e33.stat == "BodyToughness" then
+            e78.area, e78.anchor, e78.base = nil, nil, nil
+        end
+        e38()
+    end
     e7:AddToggle("BTCurrent", {
         Text = "BT: Current Area",
-        Default = false,
-        Callback = function(e9)
-            if e76 then
-                return
-            end
-            if e9 then
-                e77(function()
-                    for e11, e12 in pairs(e78.rows) do
-                        if e11 ~= "BodyToughness" and e73[e12].Value then
-                            e73[e12]:SetValue(false)
-                        end
-                        if e11 == "PsychicPower" then
-                            e69(false)
-                        end
-                    end
-                    if not e73.Stat_BodyToughness.Value then
-                        e73.Stat_BodyToughness:SetValue(true)
-                    end
-                    if e73.BTNext.Value then
-                        e73.BTNext:SetValue(false)
-                    end
-                end)
-                e33.mode = "c"
-                e33.stat = "BodyToughness"
-                e78.anchor = nil
-                e78.base = nil
-                local e11 = e60("BodyToughness")
-                local e12 = e62("BodyToughness", e11)
-                if not e12 then
-                    e78.status:SetText("Body Toughness \xe2\x80\x94 No available area")
-                    e78.area = nil
-                    e33.mode = nil
-                    e38()
-                    e48("BT Current \xe2\x80\x94 No area")
-                    return
-                end
-                local e13 = e63("BodyToughness", e12)
-                e78.area = e13
-                if not e13 then
-                    e78.status:SetText("Area '" .. e12 .. "' not found!")
-                    e33.mode = nil
-                    e38()
-                    e48("Area not found")
-                    return
-                end
-                local e14, e15 = e64(e13)
-                if e14 then
-                    e78.anchor = e15
-                    e78.status:SetText(
-                        "Body Toughness (Current) \xe2\x80\x94 Area: "
-                            .. e12
-                            .. " (req "
-                            .. e49.BodyToughness[e12].req
-                            .. " --> "
-                            .. e53(e49.BodyToughness[e12].req)
-                            .. ")"
-                            .. e59("BodyToughness")
-                    )
-                    e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
-                    e48("BT Current \xe2\x80\x94 " .. e12)
-                else
-                    e78.status:SetText("Teleport failed!")
-                    e48("Teleport failed")
-                end
-            else
-                e33.mode = nil
-                e33.stat = nil
-                e78.area = nil
-                e78.anchor = nil
-                e77(function()
-                    for e11, e12 in pairs(e78.rows) do
-                        if e73[e12].Value then
-                            e73[e12]:SetValue(false)
-                        end
-                    end
-                end)
-                e78.status:SetText("No active training")
-                e48("BT mode off")
-            end
-            e38()
+        Default = e33.mode == "c",
+        Callback = function(e901)
+            e924("c", e901)
         end,
     })
     e7:AddToggle("BTNext", {
         Text = "BT: Next Area",
-        Default = false,
-        Callback = function(e9)
-            if e76 then
-                return
-            end
-            if e9 then
-                e77(function()
-                    for e11, e12 in pairs(e78.rows) do
-                        if e11 ~= "BodyToughness" and e73[e12].Value then
-                            e73[e12]:SetValue(false)
-                        end
-                        if e11 == "PsychicPower" then
-                            e69(false)
-                        end
-                    end
-                    if not e73.Stat_BodyToughness.Value then
-                        e73.Stat_BodyToughness:SetValue(true)
-                    end
-                    if e73.BTCurrent.Value then
-                        e73.BTCurrent:SetValue(false)
-                    end
-                end)
-                e33.mode = "n"
-                e33.stat = "BodyToughness"
-                e78.anchor = nil
-                e78.base = nil
-                local e11 = e60("BodyToughness")
-                local e12 = e61("BodyToughness", e11)
-                if not e12 then
-                    e78.status:SetText("Body Toughness \xe2\x80\x94 No available area")
-                    e78.area = nil
-                    e33.mode = nil
-                    e38()
-                    e48("BT Next \xe2\x80\x94 No area")
-                    return
-                end
-                local e13 = e63("BodyToughness", e12)
-                e78.area = e13
-                if not e13 then
-                    e78.status:SetText("Area '" .. e12 .. "' not found!")
-                    e33.mode = nil
-                    e38()
-                    e48("Area not found")
-                    return
-                end
-                local e14, e15 = e64(e13)
-                if e14 then
-                    e78.anchor = e15
-                    e78.status:SetText(
-                        "Body Toughness (Next) \xe2\x80\x94 Area: "
-                            .. e12
-                            .. " (req "
-                            .. e49.BodyToughness[e12].req
-                            .. " --> "
-                            .. e53(e49.BodyToughness[e12].req)
-                            .. ")"
-                            .. e59("BodyToughness")
-                    )
-                    e78.base = e78.status.Text:gsub(" %(%+.-/s%)$", "")
-                    e48("BT Next \xe2\x80\x94 " .. e12)
-                else
-                    e78.status:SetText("Teleport failed!")
-                    e48("Teleport failed")
-                end
-            else
-                e33.mode = nil
-                e33.stat = nil
-                e78.area = nil
-                e78.anchor = nil
-                e77(function()
-                    for e11, e12 in pairs(e78.rows) do
-                        if e73[e12].Value then
-                            e73[e12]:SetValue(false)
-                        end
-                    end
-                end)
-                e78.status:SetText("No active training")
-                e48("BT mode off")
-            end
-            e38()
+        Default = e33.mode ~= "c",
+        Callback = function(e901)
+            e924("n", e901)
         end,
     })
 end
@@ -1829,12 +1799,252 @@ do
     end
 end
 
+local e909 = e75["Auto Farm"]:AddRightGroupbox("Farm Until", "flag")
+local e910 = { "Fist Strength", "Body Toughness", "Movement Speed", "Jump Force", "Psychic Power" }
+local e911 = { "FistStrength", "BodyToughness", "MovementSpeed", "JumpForce", "PsychicPower" }
+local e912 = e33.stat or "FistStrength"
+local e913 = false
+local e914
+local e915 = e909:AddLabel("", true)
+e909:AddDropdown("FarmUntilStat", {
+    Text = "Target Stat",
+    Values = e910,
+    Default = table.find(e911, e912) or 1,
+    Callback = function(e901)
+        local e902 = table.find(e910, e901)
+        if not e902 then
+            return
+        end
+        e912 = e911[e902]
+        if e914 then
+            e913 = true
+            e914:SetValue(tostring(e33.farmUntil[e912] or ""))
+            e913 = false
+        end
+    end,
+})
+local function e922(e901, e902)
+    if e913 or not e20() then
+        return false
+    end
+    e902 = e902 or e912
+    local e903 = tostring(e901 or ""):match("^%s*(.-)%s*$")
+    if e903 == "" then
+        if e33.farmUntil[e902] ~= nil then
+            e33.farmUntil[e902] = nil
+            e38()
+        end
+        return true
+    end
+    local e904 = e900(e903)
+    if not e904 or e904 <= 0 then
+        e915:SetText("Invalid target. Your previous confirmed target is unchanged.")
+        return false
+    end
+    if e33.farmUntil[e902] ~= e903 then
+        e33.farmUntil[e902] = e903
+        e38()
+    end
+    return true
+end
+
+local e923
+e914 = e909:AddInput("FarmUntilAmount", {
+    Text = "Farm Until Amount",
+    Default = tostring(e33.farmUntil[e912] or ""),
+    Placeholder = "25.1K / 100.5B / 1e15",
+    ClearTextOnFocus = false,
+    ClearTextOnBlur = false,
+    Finished = true,
+    Callback = function() end,
+})
+e44(e914.Container.Focused, function()
+    e923 = e912
+end)
+e44(e914.Container.FocusLost, function()
+    local e901 = e923 or e912
+    e923 = nil
+    local e902 = e914.Container.Text
+    e914:SetValue(e902)
+    e922(e902, e901)
+end)
+e909:AddToggle("FarmUntilEnabled", {
+    Text = "Stop When Target Is Reached",
+    Default = e33.farmUntilEnabled,
+    Callback = function(e901)
+        e33.farmUntilEnabled = e901
+        e38()
+    end,
+})
+if e73.FarmUntilEnabled and e73.FarmUntilEnabled.TextLabel then
+    e73.FarmUntilEnabled.TextLabel.TextSize = 12
+end
+
+e909:AddButton({
+    Text = "Start Selected Target",
+    Func = function()
+        local e905 = tostring(e914.Value or e33.farmUntil[e912] or ""):match("^%s*(.-)%s*$")
+        local e901 = e900(e905)
+        local e902 = e908(e912)
+        if not e901 or e901 <= 0 then
+            e915:SetText("Enter a valid target for this stat first.")
+            return
+        end
+        if e902 == nil then
+            e915:SetText("Waiting for a readable live stat.")
+            return
+        end
+        if e902 >= e901 then
+            e915:SetText("Target already reached: " .. e53(e902) .. " / " .. e53(e901))
+            return
+        end
+        local e903 = e78.rows[e912]
+        if not e903 or not e73[e903] then
+            e915:SetText("Training control for this stat is not ready.")
+            return
+        end
+        e33.farmUntil[e912] = e905
+        e33.farmStopped = false
+        e73.FarmUntilEnabled:SetValue(true)
+        e77(function()
+            for e906, e907 in pairs(e78.rows) do
+                if e73[e907] and e73[e907].Value then
+                    e73[e907]:SetValue(false)
+                end
+            end
+        end)
+        e69(false)
+        e33.stat = nil
+        e73[e903]:SetValue(true)
+        e915:SetText("Starting " .. (e78.names[e912] or e912) .. " toward " .. e53(e901))
+        e38()
+    end,
+})
+local function e921(e901)
+    if e901 == nil then
+        return "Waiting for gains"
+    end
+    if type(e901) ~= "number" or e901 ~= e901 or math.abs(e901) == math.huge then
+        return "Unavailable"
+    end
+    local e902 = math.ceil(math.max(0, e901) * 10)
+    local e903 = math.floor(e902 / 864000)
+    local e904 = math.floor(e902 % 864000 / 36000)
+    local e905 = math.floor(e902 % 36000 / 600)
+    local e906 = e902 % 600 / 10
+    local e907 = {}
+    if e903 > 0 then
+        e907[#e907 + 1] = string.format("%dd", e903)
+    end
+    if e904 > 0 then
+        e907[#e907 + 1] = string.format("%dh", e904)
+    end
+    if e905 > 0 then
+        e907[#e907 + 1] = string.format("%dm", e905)
+    end
+    if e906 > 0 then
+        e907[#e907 + 1] = string.format("%.1fs", e906)
+    end
+    return #e907 > 0 and table.concat(e907, " ") or "0s"
+end
+
+local e916 = 0
+local function e917()
+    local e901 = e912
+    local e902 = e900(e33.farmUntil[e901])
+    local e903 = e908(e901)
+    if tick() - e916 >= 0.25 then
+        e916 = tick()
+        local e904 = e56[e901] and e56[e901].r or 0
+        local e905 = e902 and e903 and math.max(0, e902 - e903)
+        e915:SetText(
+            (e78.names[e901] or e901)
+                .. "\nCurrent: "
+                .. (e903 ~= nil and e53(e903) or "Unreadable")
+                .. "\nTarget: "
+                .. (e902 and e53(e902) or "Not set")
+                .. "\nRemaining: "
+                .. (e905 ~= nil and e53(e905) or "Unavailable")
+                .. (
+                    e905 ~= nil and "\nETA: " .. e921(e905 == 0 and 0 or e904 > 0 and e905 / e904 or nil)
+                    or ""
+                )
+        )
+    end
+    if e33.farmUntilEnabled and e33.stat then
+        e901 = e33.stat
+        e902 = e900(e33.farmUntil[e901])
+        e903 = e908(e901)
+        if e903 == nil then
+            return true
+        end
+        if e902 and e902 > 0 and e903 >= e902 then
+            e33.farmStopped = true
+            e33.stat = nil
+            e78.area, e78.anchor, e78.base = nil, nil, nil
+            e77(function()
+                for e904, e905 in pairs(e78.rows) do
+                    if e73[e905] and e73[e905].Value then
+                        e73[e905]:SetValue(false)
+                    end
+                end
+            end)
+            e69(false)
+            e78.status:SetText("Farm target reached · training stopped")
+            e48((e78.names[e901] or e901) .. " target reached: " .. e53(e903))
+            e37()
+            local e906 = e4.Character
+            local e907 = e906 and e906:FindFirstChildOfClass("Humanoid")
+            if e907 and e907.Health > 0 then
+                e907.Health = 0
+            end
+            return true
+        end
+    end
+    return false
+end
+
+e19.FarmBridge.SetTarget = function(e901, e902)
+    if not e20() then
+        return false, "eSPTS is unloaded"
+    end
+    local e903 = ({
+        FS = "FistStrength",
+        BT = "BodyToughness",
+        MS = "MovementSpeed",
+        JF = "JumpForce",
+        PP = "PsychicPower",
+    })[e901]
+    local e904 = e900(e902)
+    if not e903 or not e904 or e904 <= 0 then
+        return false, "Invalid stat or target"
+    end
+    e33.farmUntil[e903] = tostring(e902)
+    e912 = e903
+    e913 = true
+    e72.FarmUntilStat:SetValue(e910[table.find(e911, e903)])
+    e914:SetValue(tostring(e902))
+    e913 = false
+    e73.FarmUntilEnabled:SetValue(true)
+    e38()
+    return true
+end
+
 e44(e1.Heartbeat, function()
     if e71.Unloaded or not e20() or not e19.gui or not e19.gui.Parent then
         e6(e19)
         return
     end
-    if e33.save and not e33.stat and e4.Character and e4.Character:FindFirstChild("HumanoidRootPart") then
+    if e917() then
+        return
+    end
+    if
+        e33.save
+        and not e33.stat
+        and not e33.farmStopped
+        and e4.Character
+        and e4.Character:FindFirstChild("HumanoidRootPart")
+    then
         local e7 = e4.Character.HumanoidRootPart
         if (e7.Position - e33.save.Position).Magnitude > 20 then
             e7.CFrame = e33.save
@@ -1934,7 +2144,7 @@ e44(e4.CharacterAdded, function(e7)
         return
     end
     local e9 = e7:WaitForChild("HumanoidRootPart", 5)
-    if e33.save and not e33.stat then
+    if e33.save and not e33.stat and not e33.farmStopped then
         task.wait(0.1)
         if e9 then
             e9.CFrame = e33.save
@@ -1946,6 +2156,7 @@ e44(e4.CharacterAdded, function(e7)
         e80()
     end
     if e33.stat and e78.area then
+        e918()
         local e11, e12 = e64(e78.area)
         if e11 then
             e78.anchor = e12
@@ -1961,7 +2172,12 @@ if e4.Character then
     if e71.Unloaded or not e20() then
         return
     end
-    if e33.save and not e33.stat and e4.Character:FindFirstChild("HumanoidRootPart") then
+    if
+        e33.save
+        and not e33.stat
+        and not e33.farmStopped
+        and e4.Character:FindFirstChild("HumanoidRootPart")
+    then
         e4.Character.HumanoidRootPart.CFrame = e33.save
     end
 end
