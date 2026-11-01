@@ -503,7 +503,7 @@ local function e53(e7)
             e11, e12 = e13[1], e13[2]
         end
     end
-    return string.format("%.1f", e9 / e12) .. e11
+    return string.format("%.3f", e9 / e12) .. e11
 end
 
 local e54 = {}
